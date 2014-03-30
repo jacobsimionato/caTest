@@ -10,18 +10,25 @@
 
 using namespace std;
 
-MipsInstructionDef::MipsInstructionDef(char* name_input, int opcode_input, int modifier_input, void (*execute_input)(MipsInterpreter interpreter, int* args) ){
+MipsInstructionDef::MipsInstructionDef(const char* name_input, char opcode_input, char modifier_input, char cpi_input, void (*execute_input)(MipsInterpreterCore* core, int instructionBin) ){
     strncpy(name, name_input, MAX_NAME_LENGTH);
     opcode = opcode_input;
     modifier = modifier_input;
+    cpi = cpi_input;
     execute = execute_input;
+    numTimesExecuted = 0;
 }
 
 void MipsInstructionDef::print(){
     cout << "Instruction: " << name << " ---- ";
-    cout << "opcode: " << opcode;
+    cout << "opcode: " << static_cast<int>(opcode);
     //If opcode is zero, modifier value is relevant
     if(opcode == 0){
-        cout << " modifier: " << modifier;
+        cout << " modifier: " << static_cast<int>(modifier);
     }
+    cout << endl;
+}
+
+void MipsInstructionDef::printFreq(){
+    cout << name << ": " << numTimesExecuted << endl;
 }

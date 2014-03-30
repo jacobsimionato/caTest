@@ -63,7 +63,7 @@ MemorySystem::MemorySystem(){
         m_blockTable[i] = NULL;
     }
     
-    m_verbose = true;
+    m_verbose = false;
 }
 
 /*

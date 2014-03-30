@@ -13,18 +13,23 @@
 
 #include <iostream>
 
-#include "mipsInterpreter.h"
+#include "mipsInterpreterCore.h"
 
 class MipsInterpreter;
 
 class MipsInstructionDef{
 public:
     char name[MAX_NAME_LENGTH];
-    int opcode;
-    int modifier;
-    void (*execute)(MipsInterpreter interpreter, int* args);
-    MipsInstructionDef(char* name_input, int opcode_input, int modifier_input, void (*execute_input)(MipsInterpreter interpreter, int* args) );
+    char opcode;
+    char modifier;
+    char cpi;
+    int numTimesExecuted;
+    void (*execute)(MipsInterpreterCore* core, int args);
+    MipsInstructionDef(const char* name_input, char opcode_input, char modifier_input, char cpi_input, void (*execute_input)(MipsInterpreterCore* core, int instructionBin) );
+    //Prints all of the attributes of the object including name, opcode, modifier, cpi
     void print();
+    //Prints only the frequency in the required format
+    void printFreq();
 };
 
 #endif /* defined(__mipsim__mipsInstructionDef__) */

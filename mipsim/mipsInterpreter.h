@@ -15,24 +15,33 @@
 
 #include "mipsTypes.h"
 #include "mipsInstructionDef.h"
+#include "mipsInterpreterCore.h"
 
 class MipsInstructionDef;
 
 class MipsInterpreter{
 public:
+    MipsInterpreter(MemorySystemGeneric* memorySystem);
     int fetchAndInterpret(int num = 0);
     int interpret(wordT instructionBin);
-    //friend MipsInstructionDef;
+    void addInstructionDef(MipsInstructionDef instructionDef);
+    void printInstructionDefs();
+    void printRegisters();
+    void printStats();
+    MipsInterpreterCore* getCore();
+    void setVerbose(bool val);
 private:
-    int getOpcode(wordT instructionBin);
-    int getModifier(wordT instructionBin);
-    void decodeInstImm(wordT instructionBin, int* destArr);
-    void decodeInstJump(wordT instructionBin, int* destArr);
-    void decodeInstReg(wordT instructionBin, int* destArr);
-    wordT m_regPc;
-    wordT m_regGp[32];
+    MipsInterpreterCore m_interpreterCore;
     
-    std::map<int, MipsInstructionDef> instructionDefs;
+    bool m_verbose;
+    
+    int m_cycleCount;
+    int m_instrCount;
+    
+    int genKeyFromInstruction(wordT instructionBin);
+
+    
+    std::map<int, MipsInstructionDef> m_instructionDefs;
 };
 
 #endif /* defined(__mipsim__mipsInterpreter__) */

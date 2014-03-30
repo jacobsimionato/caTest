@@ -12,11 +12,12 @@
 #include <iostream>
 
 #include "mipsTypes.h"
+#include "memorySystemGeneric.h"
 
 #define BLOCKSIZE 512  //Size of block in bytes
 #define NUM_BLOCKS 128 //NUM_BLOCKS = 2^16 / BLOCKSIZE
 
-class MemorySystem{
+class MemorySystem: public MemorySystemGeneric{
 public:
     //Exposed data I/O interface
     void setWord(int address, wordT data);

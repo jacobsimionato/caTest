@@ -13,6 +13,9 @@
 		1666FAD718E7AFF600CC03F8 /* mipsInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAD518E7AFF600CC03F8 /* mipsInterpreter.cpp */; };
 		1666FADE18E7D3D300CC03F8 /* mipsInstructionDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FADC18E7D3D300CC03F8 /* mipsInstructionDef.cpp */; };
 		1666FAE118E7DA9800CC03F8 /* mipsInstructionFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FADF18E7DA9800CC03F8 /* mipsInstructionFunctions.cpp */; };
+		1666FAE418E7E05000CC03F8 /* mipsInterpreterCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE218E7E05000CC03F8 /* mipsInterpreterCore.cpp */; };
+		1666FAE718E7E10200CC03F8 /* memorySystemGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */; };
+		1666FAEA18E8268A00CC03F8 /* debugHelperFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE818E8268A00CC03F8 /* debugHelperFunctions.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +44,12 @@
 		1666FADD18E7D3D300CC03F8 /* mipsInstructionDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipsInstructionDef.h; sourceTree = "<group>"; };
 		1666FADF18E7DA9800CC03F8 /* mipsInstructionFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mipsInstructionFunctions.cpp; sourceTree = "<group>"; };
 		1666FAE018E7DA9800CC03F8 /* mipsInstructionFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipsInstructionFunctions.h; sourceTree = "<group>"; };
+		1666FAE218E7E05000CC03F8 /* mipsInterpreterCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mipsInterpreterCore.cpp; sourceTree = "<group>"; };
+		1666FAE318E7E05000CC03F8 /* mipsInterpreterCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipsInterpreterCore.h; sourceTree = "<group>"; };
+		1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memorySystemGeneric.cpp; sourceTree = "<group>"; };
+		1666FAE618E7E10200CC03F8 /* memorySystemGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memorySystemGeneric.h; sourceTree = "<group>"; };
+		1666FAE818E8268A00CC03F8 /* debugHelperFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debugHelperFunctions.cpp; sourceTree = "<group>"; };
+		1666FAE918E8268A00CC03F8 /* debugHelperFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debugHelperFunctions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,10 +83,16 @@
 			isa = PBXGroup;
 			children = (
 				1666FAC918E7AF9500CC03F8 /* main.cpp */,
+				1666FAE818E8268A00CC03F8 /* debugHelperFunctions.cpp */,
+				1666FAE918E8268A00CC03F8 /* debugHelperFunctions.h */,
+				1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */,
+				1666FAE618E7E10200CC03F8 /* memorySystemGeneric.h */,
 				1666FAD218E7AFAE00CC03F8 /* memorySystem.cpp */,
 				1666FAD318E7AFAE00CC03F8 /* memorySystem.h */,
 				1666FAD518E7AFF600CC03F8 /* mipsInterpreter.cpp */,
 				1666FAD618E7AFF600CC03F8 /* mipsInterpreter.h */,
+				1666FAE218E7E05000CC03F8 /* mipsInterpreterCore.cpp */,
+				1666FAE318E7E05000CC03F8 /* mipsInterpreterCore.h */,
 				1666FADC18E7D3D300CC03F8 /* mipsInstructionDef.cpp */,
 				1666FADD18E7D3D300CC03F8 /* mipsInstructionDef.h */,
 				1666FADF18E7DA9800CC03F8 /* mipsInstructionFunctions.cpp */,
@@ -139,6 +154,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1666FAE718E7E10200CC03F8 /* memorySystemGeneric.cpp in Sources */,
+				1666FAEA18E8268A00CC03F8 /* debugHelperFunctions.cpp in Sources */,
+				1666FAE418E7E05000CC03F8 /* mipsInterpreterCore.cpp in Sources */,
 				1666FACA18E7AF9500CC03F8 /* main.cpp in Sources */,
 				1666FADE18E7D3D300CC03F8 /* mipsInstructionDef.cpp in Sources */,
 				1666FAD718E7AFF600CC03F8 /* mipsInterpreter.cpp in Sources */,
@@ -221,6 +239,7 @@
 		1666FAD018E7AF9500CC03F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -228,6 +247,7 @@
 		1666FAD118E7AF9500CC03F8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
