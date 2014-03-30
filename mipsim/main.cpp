@@ -7,12 +7,18 @@
 //
 
 #include <iostream>
+#include "memorySystem.h"
 
-int main(int argc, const char * argv[])
-{
+using namespace std;
 
-    // insert code here...
-    std::cout << "Hello, World!\n";
+int main(int argc, const char * argv[]){
+    MemorySystem memorySystem;
+    memorySystem.setWord(3400, 4667);
+    memorySystem.setWord(50000, 12345);
+    memorySystem.setWord(0, 3);
+    memorySystem.printSummary();
+    cout << memorySystem.retrieveWord(3400) << endl;
+    
     return 0;
 }
 

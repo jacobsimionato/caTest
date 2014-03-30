@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		1666FACA18E7AF9500CC03F8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAC918E7AF9500CC03F8 /* main.cpp */; };
 		1666FACC18E7AF9500CC03F8 /* mipsim.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1666FACB18E7AF9500CC03F8 /* mipsim.1 */; };
+		1666FAD418E7AFAE00CC03F8 /* memorySystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAD218E7AFAE00CC03F8 /* memorySystem.cpp */; };
+		1666FAD718E7AFF600CC03F8 /* mipsInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAD518E7AFF600CC03F8 /* mipsInterpreter.cpp */; };
+		1666FADE18E7D3D300CC03F8 /* mipsInstructionDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FADC18E7D3D300CC03F8 /* mipsInstructionDef.cpp */; };
+		1666FAE118E7DA9800CC03F8 /* mipsInstructionFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FADF18E7DA9800CC03F8 /* mipsInstructionFunctions.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +32,15 @@
 		1666FAC618E7AF9500CC03F8 /* mipsim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mipsim; sourceTree = BUILT_PRODUCTS_DIR; };
 		1666FAC918E7AF9500CC03F8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		1666FACB18E7AF9500CC03F8 /* mipsim.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = mipsim.1; sourceTree = "<group>"; };
+		1666FAD218E7AFAE00CC03F8 /* memorySystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memorySystem.cpp; sourceTree = "<group>"; };
+		1666FAD318E7AFAE00CC03F8 /* memorySystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memorySystem.h; sourceTree = "<group>"; };
+		1666FAD518E7AFF600CC03F8 /* mipsInterpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mipsInterpreter.cpp; sourceTree = "<group>"; };
+		1666FAD618E7AFF600CC03F8 /* mipsInterpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipsInterpreter.h; sourceTree = "<group>"; };
+		1666FADB18E7CFC900CC03F8 /* mipsTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mipsTypes.h; sourceTree = "<group>"; };
+		1666FADC18E7D3D300CC03F8 /* mipsInstructionDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mipsInstructionDef.cpp; sourceTree = "<group>"; };
+		1666FADD18E7D3D300CC03F8 /* mipsInstructionDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipsInstructionDef.h; sourceTree = "<group>"; };
+		1666FADF18E7DA9800CC03F8 /* mipsInstructionFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mipsInstructionFunctions.cpp; sourceTree = "<group>"; };
+		1666FAE018E7DA9800CC03F8 /* mipsInstructionFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipsInstructionFunctions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +74,15 @@
 			isa = PBXGroup;
 			children = (
 				1666FAC918E7AF9500CC03F8 /* main.cpp */,
+				1666FAD218E7AFAE00CC03F8 /* memorySystem.cpp */,
+				1666FAD318E7AFAE00CC03F8 /* memorySystem.h */,
+				1666FAD518E7AFF600CC03F8 /* mipsInterpreter.cpp */,
+				1666FAD618E7AFF600CC03F8 /* mipsInterpreter.h */,
+				1666FADC18E7D3D300CC03F8 /* mipsInstructionDef.cpp */,
+				1666FADD18E7D3D300CC03F8 /* mipsInstructionDef.h */,
+				1666FADF18E7DA9800CC03F8 /* mipsInstructionFunctions.cpp */,
+				1666FAE018E7DA9800CC03F8 /* mipsInstructionFunctions.h */,
+				1666FADB18E7CFC900CC03F8 /* mipsTypes.h */,
 				1666FACB18E7AF9500CC03F8 /* mipsim.1 */,
 			);
 			path = mipsim;
@@ -118,6 +140,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				1666FACA18E7AF9500CC03F8 /* main.cpp in Sources */,
+				1666FADE18E7D3D300CC03F8 /* mipsInstructionDef.cpp in Sources */,
+				1666FAD718E7AFF600CC03F8 /* mipsInterpreter.cpp in Sources */,
+				1666FAD418E7AFAE00CC03F8 /* memorySystem.cpp in Sources */,
+				1666FAE118E7DA9800CC03F8 /* mipsInstructionFunctions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
