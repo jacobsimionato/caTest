@@ -17,8 +17,14 @@ using namespace std;
  
  returns 0 on success, or -1 on error
  */
-void MemorySystem::setWord(int address, wordT data){
+void MemorySystem::setWord(wordT address, wordT data){
     int blockNum = address / BLOCKSIZE;
+    
+    if(blockNum >= NUM_BLOCKS){
+        cout << "MemorySystem::setWord ERROR - address out of range" << endl;
+        return;
+    }
+    
     if(m_blockTable[blockNum] == NULL){
         allocateBlock(blockNum);
     }
@@ -36,8 +42,14 @@ void MemorySystem::setWord(int address, wordT data){
  
  returns data as unsigned word 
  */
-wordT MemorySystem::retrieveWord(int address){
+wordT MemorySystem::retrieveWord(wordT address){
     int blockNum = address / BLOCKSIZE;
+    
+    if(blockNum >= NUM_BLOCKS){
+        cout << "MemorySystem::setWord ERROR - address out of range" << endl;
+        return 0;
+    }
+    
     //If the block is not allocated, then return -1 to indicate error
     if(m_blockTable[blockNum] == NULL){
         if(m_verbose){
@@ -58,6 +70,10 @@ wordT MemorySystem::retrieveWord(int address){
  Constructor sets each pointer in m_blockTable to NULL to indicate they have not yet been allocated
  */
 MemorySystem::MemorySystem(){
+    m_blockTable = new wordT*[NUM_BLOCKS];
+    
+    //int** tester = new int*[400];
+    
     //Initialize m_blockTable pointer array to all NULLS to indicate unallocated blocks
     for(int i = 0; i<NUM_BLOCKS; i++){
         m_blockTable[i] = NULL;

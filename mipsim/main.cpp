@@ -6,148 +6,152 @@
 //  Copyright (c) 2014 Jacob. All rights reserved.
 //
 
+
+/*TODO
+ -Add checking for out of range block address
+ -Add commments
+ 
+ */
+
 #include <iostream>
 #include <string>
 #include <sys/time.h>
+#include <iomanip>
+#include <cstring>
 
 #include "memorySystem.h"
 #include "mipsInterpreter.h"
 #include "mipsInstructionFunctions.h"
+#include "patternMatchers.h"
+#include "debugHelperFunctions.h"
+#include "mipSimPerformance.h"
+#include "mipsimTests.h"
+
 
 using namespace std;
 
-//Timer Stuff
-long testTimer_getCurrentTimeMillis(){
-    timeval time;
-    gettimeofday(&time, NULL);
-    return (time.tv_sec * 1000) + (time.tv_usec / 1000);
-}
-
-unsigned long testTimer_startTime = testTimer_getCurrentTimeMillis();
-string testTime_name;
-
-void testTimer_start(string name){
-    testTimer_startTime = testTimer_getCurrentTimeMillis();
-    testTime_name = name;
-}
-
-long testTimer_getDurationMillis(){
-    return testTimer_getCurrentTimeMillis() - testTimer_startTime;
-}
-
-void testTimer_print(){
-    float durationSeconds = testTimer_getDurationMillis() / 1000.0;
-    cout << "TIMER: " << testTime_name << " - " << durationSeconds << " seconds" << endl;
-}
-
-//Test suite
-void testArithmetic();
-void testMemory();
+bool g_verbose = false;
 
 
-//Adds instruction definitions to the interpreter
-void addInstructionsToInterpreter(MipsInterpreter &interpreter);
 
 int main(int argc, const char * argv[]){
+    
+    //Use args to stuff up and run tests
+    if(argc > 1){
+        for(int argNum = 1; argNum < argc; argNum++){
+            if(strcmp(argv[1], "-v") == 0){
+                //Verbose mode
+                g_verbose = true;
+            }else if(strcmp(argv[1], "-p") == 0){
+                testArithmeticPerformance();
+                testExecutionSpeedPerformance();
+                testMemoryPerformance();
+            }else if(strcmp(argv[1], "-t") == 0){
+                runMipsimTests();
+            }
+        }
+    }
+    
+    //Setup main environment
     MemorySystem memorySystem;
     MipsInterpreter mipsInterpreter(&memorySystem);
     addInstructionsToInterpreter(mipsInterpreter);
     
-    mipsInterpreter.printInstructionDefs();
-    
-    testArithmetic();
-    testMemory();
-    
-    //mipsInterpreter.printRegisters();
-    //mipsInterpreter.printStats();
+    //int hexInt;
+    //string input = "Ff";
+    //bool success = hexStrToInt(input, hexInt);
+    //cout << "hex str FF success: " << success << " and result: " << hexInt << endl;
+    //g_verbose = false;
+    do {
+        string cmdStr;
+        std::getline(std::cin,cmdStr);
+        removeComment(cmdStr);
+        padEquals(cmdStr);
+        vector<string> cmdVec = explode(cmdStr, " \n\r");
+        //
+        if(g_verbose || false){
+            //cout << endl;
+            cout << cmdStr << endl;
+            //cout << "Command Breakdown: " << endl;
+            //printStrVector(cmdVec);
+            //printStrInts(cmdStr);
+        }
+        
+        if(cmdVec.size() > 0){
+            bool executeSuccess = false;
+            //If we have a 1 or 3 length cmdVec with 'r' at the start
+            if(cmdVec[0][0] == 'r' && (cmdVec.size() == 1 || cmdVec.size() == 3)){
+                string regNumStr = cmdVec[0].substr(1, string::npos);
+                unsigned int regNumInt;
+                if(decStrToInt(regNumStr, regNumInt)){
+                    if(cmdVec.size() == 1){
+                        //"rn" - print reg rn
+                        cout << hex << setw(8) << setfill('0') << mipsInterpreter.getCore()->getRegUns(regNumInt) << endl;
+                        executeSuccess = true;
+                    }else if(cmdVec[1] == "="){
+                        unsigned int regVal;
+                        if(hexStrToInt(cmdVec[2], regVal)){
+                            //"rn = value" - set register n to value (in hex)
+                            mipsInterpreter.getCore()->setRegUns(regNumInt, regVal);
+                            executeSuccess = true;
+                        }
+                    }
+                }
+            }else if(cmdVec[0] == "m" && cmdVec.size() == 2){
+                unsigned int memAddress;
+                if(hexStrToInt(cmdVec[1], memAddress)){
+                    //"m address"
+                    cout << hex << setw(8) << setfill('0') << memorySystem.retrieveWord(memAddress) << endl;
+                    executeSuccess = true;
+                }
+            }else if(cmdVec[0] == "m" && cmdVec.size() == 4){
+                unsigned int memAddress;
+                unsigned int memValue;
+                if(hexStrToInt(cmdVec[1], memAddress) && hexStrToInt(cmdVec[3], memValue) && cmdVec[2] == "="){
+                    //"m address = value"
+                    memorySystem.setWord(memAddress, memValue);
+                    executeSuccess = true;
+                }
+            }else if(cmdVec[0] == "pc" && cmdVec.size() == 1){
+                //"pc"
+                cout << hex << setw(8) << setfill('0') << mipsInterpreter.getCore()->getPc() << endl;
+                executeSuccess = true;
+            }else if(cmdVec[0] == "pc" && cmdVec.size() == 3){
+                unsigned int pcAddress;
+                if(hexStrToInt(cmdVec[2], pcAddress) && cmdVec[1] == "="){
+                    //"pc = address"
+                    mipsInterpreter.getCore()->setPc(pcAddress);
+                    executeSuccess = true;
+                }
+            }else if(cmdVec[0] == "." && cmdVec.size() == 1){
+                //"." - Execute one instruction
+                mipsInterpreter.fetchAndInterpret(1);
+                executeSuccess = true;
+            }else if(cmdVec[0] == "." && cmdVec.size() == 2){
+                unsigned int numInstrs;
+                if(decStrToInt(cmdVec[1], numInstrs)){
+                    //". n" - Execute n instructions
+                    mipsInterpreter.fetchAndInterpret(numInstrs);
+                    executeSuccess = true;
+                }
+            }
+            
+            if(!executeSuccess){
+                if(g_verbose){
+                    cout << "Sorry command not recognized!" << endl;
+                }
+            }
+        }
+         
+         
+         
+        
+    }while(!cin.eof());
+    mipsInterpreter.printStats();
     
     return 0;
 }
 
-//Adds instruction definitions to the interpreter
-void addInstructionsToInterpreter(MipsInterpreter &interpreter){
-    /*
-     Add instruction defs corresponding to all 9 of the supported instructions. The behaviour of the instructions is defined by including a pointer to a function defined in "mipsInstructionFunctions.h"
-     */
-    interpreter.addInstructionDef(MipsInstructionDef("add", 0, 32, 4, mips_f_add));
-    interpreter.addInstructionDef(MipsInstructionDef("addi", 8, 0, 4, mips_f_addi));
-    interpreter.addInstructionDef(MipsInstructionDef("slti", 10, 0, 4, mips_f_slti));
-    interpreter.addInstructionDef(MipsInstructionDef("slt", 0, 42, 4, mips_f_slt));
-    interpreter.addInstructionDef(MipsInstructionDef("beq", 4, 0, 3, mips_f_beq));
-    interpreter.addInstructionDef(MipsInstructionDef("bne", 5, 0, 3, mips_f_bne));
-    interpreter.addInstructionDef(MipsInstructionDef("j", 2, 0, 2, mips_f_j));
-    interpreter.addInstructionDef(MipsInstructionDef("lw", 35, 0, 5, mips_f_lw));
-    interpreter.addInstructionDef(MipsInstructionDef("sw", 43, 0, 4, mips_f_sw));
-}
 
-void testArithmetic(){
-    cout << "================== Testing Arithmetic Functions ===================" << endl;
-    MemorySystem memorySystem;
-    MipsInterpreter mipsInterpreter(&memorySystem);
-    addInstructionsToInterpreter(mipsInterpreter);
-    mipsInterpreter.getCore()->setRegSig(1, -8);
-    mipsInterpreter.getCore()->setRegSig(2, 3);
-    memorySystem.setWord(0x0, 0x00221820);
-    mipsInterpreter.fetchAndInterpret(1);
-    cout << "R3 is ";
-    cout << mipsInterpreter.getCore()->getRegSig(3) << endl;
-    mipsInterpreter.getCore()->setRegUns(1, 0x1001);
-    mipsInterpreter.getCore()->setRegUns(2, 0x0342);
-    memorySystem.setWord(0x4, 0x00221820);
-    mipsInterpreter.fetchAndInterpret(1);
-    cout << "R3 is ";
-    cout << hex << mipsInterpreter.getCore()->getRegUns(3) << endl;
-    mipsInterpreter.printStats();
-    
-    //Set registers to ascending numbers
-    for(int i=1; i<32; i++){
-        mipsInterpreter.getCore()->setRegUns(i, i);
-    }
-    
-    srand(time(0));
-    testTimer_start("2 000 000 random arithmetic operations");
-    for(int i=0; i < 1000000; i++){
-        memorySystem.setWord(i*4, 0x00221820); //Add R3 <- R1, R2
-        memorySystem.setWord(i*4, 0x00221820); //Add R3 <- R1, R2
-        memorySystem.setWord(i*4, 0x00221820); //Add R3 <- R1, R2
-        
-        memorySystem.setWord((rand()%16384) * 4, rand());
-    }
-    testTimer_print();
-    
-    
-}
 
-void testMemory(){
-    cout << "================== Testing Memory System ===================" << endl;
-    MemorySystem memorySystem;
-    //MipsInterpreter mipsInterpreter(&memorySystem);
-    //addInstructionsToInterpreter(mipsInterpreter);
-    
-    memorySystem.setWord(3400, 4667);
-    memorySystem.setWord(50000, 12345);
-    memorySystem.setWord(0, 3);
-    cout << memorySystem.retrieveWord(3400) << endl;
-    
-    memorySystem.printSummary();
-    memorySystem.setVerbose(false);
-    
-    srand(time(0));
-    testTimer_start("100 000 000 random writes");
-    for(int i=0; i < 100000000; i++){
-        memorySystem.setWord((rand()%16384) * 4, rand());
-    }
-    testTimer_print();
-    
-    memorySystem.setVerbose(false);
-    
-    testTimer_start("100 000 000 random reads");
-    for(int i=0; i < 100000000; i++){
-        memorySystem.retrieveWord((rand()%16384) * 4);
-    }
-    testTimer_print();
-    //mipsInterpreter.printStats();
-    //mipsInterpreter.printRegisters();
-    
-    
-}
+

@@ -10,7 +10,7 @@
 #define __mipsim__mipsInstructionFunctions__
 
 #include <iostream>
-#include "MipsInterpreterCore.h"
+#include "mipsInterpreterCore.h"
 
 struct ParamsReg{
     char d;

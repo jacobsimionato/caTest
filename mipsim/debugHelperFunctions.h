@@ -10,5 +10,15 @@
 #define __mipsim__debugHelperFunctions__
 
 #include <iostream>
+#include "mipsTypes.h"
+
+wordT genInstAdd(int s, int t, int d);
+
+wordT genInstAddi(int s, int t, int C);
+
+wordT genInstSw(int s, int t, int C);
+
+wordT genInstLw(int s, int t, int C);
 
 #endif /* defined(__mipsim__debugHelperFunctions__) */
+

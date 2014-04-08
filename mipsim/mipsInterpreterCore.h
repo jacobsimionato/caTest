@@ -29,7 +29,10 @@ public:
     void setRegSig(int regNum, wordST val);
     wordT getPc();
     void setPc(wordT val);
+    //Increment PC forwards by this unsigned value
     void incPc(wordT val);
+    //Relative jump
+    void relJumpPc(long val);
     wordT fetchInstruction();
     MemorySystemGeneric* getMemorySystem();
     

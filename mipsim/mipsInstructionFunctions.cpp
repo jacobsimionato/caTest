@@ -12,6 +12,9 @@
 #define BITMASK_5 31
 #define BITMASK_16 65535
 #define BITMASK_26 67108863
+
+using namespace std;
+
 /*
  Instruction decode functions extract the bit fields from each instruction
  Each parameter field is saved as an integer into the destination array in the order they appear in the binary number from most significant to least significant section
@@ -93,7 +96,11 @@ void mips_f_slt(MipsInterpreterCore* core, int instructionBin){
 void mips_f_beq(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     if(core->getRegUns(params.s) == core->getRegUns(params.t)){
-        core->incPc(params.C * 4);
+        //Interpret offset as signed 16 bit integer
+        halfST jumpOffsetWords = static_cast<halfST>(params.C);
+        //Multiply word address by 4 to obtain byte address
+        long jumpOffsetBytes = jumpOffsetWords * 4;
+        core->relJumpPc(jumpOffsetBytes);
     }
 }
 
@@ -101,14 +108,24 @@ void mips_f_beq(MipsInterpreterCore* core, int instructionBin){
 void mips_f_bne(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     if(core->getRegUns(params.s) != core->getRegUns(params.t)){
-        core->incPc(params.C * 4);
+        //Interpret offset as signed 16 bit integer
+        halfST jumpOffsetWords = static_cast<halfST>(params.C);
+        //Multiply word address by 4 to obtain byte address
+        long jumpOffsetBytes = jumpOffsetWords * 4;
+        core->relJumpPc(jumpOffsetBytes);
     }
 }
 
 
 void mips_f_j(MipsInterpreterCore* core, int instructionBin){
     ParamsJump params = decodeInstJump(instructionBin);
-    core->incPc(params.C * 4);
+    
+    wordT lower28bits = params.C * 4;
+    wordT curPc = core->getPc();
+    curPc = curPc & 0xF0000000;
+    curPc = curPc | lower28bits;
+    //cout << "jumpOffsetBytes: " << jumpOffsetBytes << endl;
+    core->setPc(curPc - 4);
 }
 
 

@@ -44,4 +44,8 @@ private:
     std::map<int, MipsInstructionDef> m_instructionDefs;
 };
 
+
+//Adds instruction definitions to the interpreter
+void addInstructionsToInterpreter(MipsInterpreter &interpreter);
+
 #endif /* defined(__mipsim__mipsInterpreter__) */

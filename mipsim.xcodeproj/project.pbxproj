@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		160D757418F392860074FC0C /* mipsimTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 160D757218F392860074FC0C /* mipsimTests.cpp */; };
+		160D757718F3945C0074FC0C /* mipSimPerformance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 160D757518F3945C0074FC0C /* mipSimPerformance.cpp */; };
 		1666FACA18E7AF9500CC03F8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAC918E7AF9500CC03F8 /* main.cpp */; };
 		1666FACC18E7AF9500CC03F8 /* mipsim.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1666FACB18E7AF9500CC03F8 /* mipsim.1 */; };
 		1666FAD418E7AFAE00CC03F8 /* memorySystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAD218E7AFAE00CC03F8 /* memorySystem.cpp */; };
@@ -16,6 +18,7 @@
 		1666FAE418E7E05000CC03F8 /* mipsInterpreterCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE218E7E05000CC03F8 /* mipsInterpreterCore.cpp */; };
 		1666FAE718E7E10200CC03F8 /* memorySystemGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */; };
 		1666FAEA18E8268A00CC03F8 /* debugHelperFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE818E8268A00CC03F8 /* debugHelperFunctions.cpp */; };
+		167E452818E9127B00A00AA3 /* patternMatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 167E452618E9127B00A00AA3 /* patternMatchers.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,6 +35,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		160D757218F392860074FC0C /* mipsimTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mipsimTests.cpp; sourceTree = "<group>"; };
+		160D757318F392860074FC0C /* mipsimTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipsimTests.h; sourceTree = "<group>"; };
+		160D757518F3945C0074FC0C /* mipSimPerformance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mipSimPerformance.cpp; sourceTree = "<group>"; };
+		160D757618F3945C0074FC0C /* mipSimPerformance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipSimPerformance.h; sourceTree = "<group>"; };
 		1666FAC618E7AF9500CC03F8 /* mipsim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mipsim; sourceTree = BUILT_PRODUCTS_DIR; };
 		1666FAC918E7AF9500CC03F8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		1666FACB18E7AF9500CC03F8 /* mipsim.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = mipsim.1; sourceTree = "<group>"; };
@@ -50,6 +57,8 @@
 		1666FAE618E7E10200CC03F8 /* memorySystemGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memorySystemGeneric.h; sourceTree = "<group>"; };
 		1666FAE818E8268A00CC03F8 /* debugHelperFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debugHelperFunctions.cpp; sourceTree = "<group>"; };
 		1666FAE918E8268A00CC03F8 /* debugHelperFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debugHelperFunctions.h; sourceTree = "<group>"; };
+		167E452618E9127B00A00AA3 /* patternMatchers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = patternMatchers.cpp; sourceTree = "<group>"; };
+		167E452718E9127B00A00AA3 /* patternMatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patternMatchers.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +92,12 @@
 			isa = PBXGroup;
 			children = (
 				1666FAC918E7AF9500CC03F8 /* main.cpp */,
+				160D757218F392860074FC0C /* mipsimTests.cpp */,
+				160D757318F392860074FC0C /* mipsimTests.h */,
+				160D757518F3945C0074FC0C /* mipSimPerformance.cpp */,
+				160D757618F3945C0074FC0C /* mipSimPerformance.h */,
+				167E452618E9127B00A00AA3 /* patternMatchers.cpp */,
+				167E452718E9127B00A00AA3 /* patternMatchers.h */,
 				1666FAE818E8268A00CC03F8 /* debugHelperFunctions.cpp */,
 				1666FAE918E8268A00CC03F8 /* debugHelperFunctions.h */,
 				1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */,
@@ -154,11 +169,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				160D757718F3945C0074FC0C /* mipSimPerformance.cpp in Sources */,
 				1666FAE718E7E10200CC03F8 /* memorySystemGeneric.cpp in Sources */,
 				1666FAEA18E8268A00CC03F8 /* debugHelperFunctions.cpp in Sources */,
+				167E452818E9127B00A00AA3 /* patternMatchers.cpp in Sources */,
 				1666FAE418E7E05000CC03F8 /* mipsInterpreterCore.cpp in Sources */,
 				1666FACA18E7AF9500CC03F8 /* main.cpp in Sources */,
 				1666FADE18E7D3D300CC03F8 /* mipsInstructionDef.cpp in Sources */,
+				160D757418F392860074FC0C /* mipsimTests.cpp in Sources */,
 				1666FAD718E7AFF600CC03F8 /* mipsInterpreter.cpp in Sources */,
 				1666FAD418E7AFAE00CC03F8 /* memorySystem.cpp in Sources */,
 				1666FAE118E7DA9800CC03F8 /* mipsInstructionFunctions.cpp in Sources */,
@@ -241,6 +259,7 @@
 			buildSettings = {
 				GCC_OPTIMIZATION_LEVEL = 3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYMROOT = "/../ca_20/Users/Jacob/Documents/Uni 2014/CA/Assignment 1/ca_2014_s1_test";
 			};
 			name = Debug;
 		};
@@ -249,6 +268,7 @@
 			buildSettings = {
 				GCC_OPTIMIZATION_LEVEL = 3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYMROOT = "/../ca_20/Users/Jacob/Documents/Uni 2014/CA/Assignment 1/ca_2014_s1_test";
 			};
 			name = Release;
 		};
@@ -271,6 +291,7 @@
 				1666FAD118E7AF9500CC03F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

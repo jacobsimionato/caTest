@@ -75,6 +75,18 @@ void MipsInterpreterCore::incPc(wordT val){
     m_regPc += val;
 }
 
+
+void MipsInterpreterCore::relJumpPc(long val){
+    //If offset positive, add as usual
+    if(val >= 0){
+        m_regPc += val;
+    //If value negative, subtract absolute value using unsigned maths
+    }else{
+        unsigned int absVal = abs(val);
+        m_regPc -= absVal;
+    }
+}
+
 wordT MipsInterpreterCore::fetchInstruction(){
     return m_memorySystem->retrieveWord(m_regPc);
 }

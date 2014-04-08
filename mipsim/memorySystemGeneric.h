@@ -16,8 +16,8 @@
 class MemorySystemGeneric{
 public:
     //Exposed data I/O interface
-    virtual void setWord(int address, wordT data) = 0;
-    virtual wordT retrieveWord(int address) = 0;
+    virtual void setWord(wordT address, wordT data) = 0;
+    virtual wordT retrieveWord(wordT address) = 0;
     
     //Sets memory system to verbose or non-verbose modes
     virtual void setVerbose(bool m_verbose_set = true) = 0;
