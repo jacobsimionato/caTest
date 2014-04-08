@@ -10,7 +10,8 @@
 /*TODO
  -Add checking for out of range block address
  -Add commments
- 
+ -Add tests for basic core functionality
+ -Assume tests are already written for higher-level functionality eg interpreting instructions
  */
 
 #include <iostream>
