@@ -18,40 +18,34 @@ class cmdLineOption{
 public:
     
     //Parses
-    bool parse(int &argc, int &argnum, const char * argv[]);
-    
-    
     std::string getArgStr(int argIdx);
     int getArgPosInt(int argIdx); //returns -1 if not possible
     int getArgPwr2(int argIdx); //returns -1 if not possible
-    bool wasFound();
+    int getNumArgs();
     void print();
     
-    //For global control
-    
-    //static void defineNew(std::string flag, int numArgs = 0);
+    /*
+     =============== For global control ===============
+     */
     
     //Clear all defined options - to allow testing
     static void clearAllOptions();
-    
-    /*
-     Parses arguments using currently defined options
-     */
+
+    //Parses argument vector grouping by -tags
     static void parseCmdLineOptions(int argc,  const char * argv[]);
     
+    //Print all the currently discovered command line options
     static void printAll();
     
-    static cmdLineOption* checkOption(std::string key);
+    //Find a command line option by tag
+    static cmdLineOption* findOpt(std::string key);
 private:
-    //private constructor can only be called by define:
-    std::string m_tag;
-    int m_numArgs;
+    cmdLineOption();
     std::vector<std::string> m_valStrings;
-    bool m_found;
+
     static bool m_verbose;
-    
-    cmdLineOption(std::string flag, int numArgs = 0);
-    
+
+    static std::string m_lastAddedTag;
     //vector containing every command line option
     static std::map<std::string, cmdLineOption> m_cmdLineOptions;
 };

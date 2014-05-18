@@ -52,47 +52,32 @@ int main(int argc, const char * argv[]){
     
     //Parse command line arguments
     if(argc > 1){
-        
-        cmdLineOption::defineNew("-t");
-        cmdLineOption::defineNew("-v");
-        cmdLineOption::defineNew("-p");
-        cmdLineOption::defineNew("-Is", 1);
-        cmdLineOption::defineNew("-Ib", 1);
-        cmdLineOption::defineNew("-Ia", 1);
-        cmdLineOption::defineNew("-Ds", 1);
-        cmdLineOption::defineNew("-Db", 1);
-        cmdLineOption::defineNew("-Da", 1);
-        cmdLineOption::defineNew("-Dwt");
-        cmdLineOption::defineNew("-Dwb");
-        cmdLineOption::defineNew("-Ma", 1);
-        cmdLineOption::defineNew("-Mw", 1);
 
         cmdLineOption::parseCmdLineOptions(argc, argv);
         cmdLineOption::printAll();
 
-    
-        if( cmdLineOption::checkOption("-v")->wasFound()){
+        cmdLineOption *o_v, *o_t, *o_p;
+        if((o_v = cmdLineOption::findOpt("-v"))){
             //Enable verbose mode
             g_verbose = true;
         }
-        if( cmdLineOption::checkOption("-t")->wasFound()){
+        
+        if((o_t = cmdLineOption::findOpt("-t"))){
             //Run unit testing suite and then exit
             cout << "running tests" << endl;
             runMipsimTests();
         }
-        if( cmdLineOption::checkOption("-p")->wasFound()){
+        
+        if((o_p = cmdLineOption::findOpt("-p"))){
             //Run execution speed tests and then exit
             testExecutionSpeedPerformance();
             testMemoryPerformance();
         }
         
-        if(cmdLineOption::checkOption("-t")->wasFound() || cmdLineOption::checkOption("-p")->wasFound()){
+        if(o_t || o_p){
+            //If we run tests or performance, then exit and don't run regular program
             exit(0);
         }
-
-    
-        
-        exit(0);
         
     }
     

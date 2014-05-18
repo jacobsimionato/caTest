@@ -36,6 +36,7 @@ void runMipsimTests();
 void runPatternMatchersTests();
 void runMipsInterpreterTests();
 void runMemorySystemTests();
+void runCmdLineOptionTests();
 
 
 #endif /* defined(__mipsim__mipsimTests__) */

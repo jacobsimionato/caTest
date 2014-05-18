@@ -110,6 +110,7 @@ void runMipsimTests(){
     runPatternMatchersTests();
     runMipsInterpreterTests();
     runMemorySystemTests();
+    runCmdLineOptionTests();
     //Report results
     cout << endl;
     cout << numTestsPassed << " tests PASSED" << endl;
@@ -264,7 +265,37 @@ void runMemorySystemTests(){
 }
 
 void runCmdLineOptionTests(){
-    const char* mock[] = {"-t", "-Ib", "3454", "-Ds", "sd", "-Ma", "3454", "-Db", "1024"};
-
+    const char* mockArgv[] = {"-t", "-Ib", "3454", "2048", "dk", "-Ds", "sd", "-Ma", "3454", "-Db", "1024"};
+    int mockArgc = sizeof(mockArgv)/sizeof(mockArgv[0]);
+    cmdLineOption::clearAllOptions();
+    cmdLineOption::parseCmdLineOptions(mockArgc, mockArgv);
+    
+    cmdLineOption* curOpt;
+    curOpt = cmdLineOption::findOpt("-Ds");
+    assert(curOpt != NULL, true, "existing cmd line option -Ds is found");
+    if(curOpt!=NULL){
+        assert(curOpt->getNumArgs(), 1, "-Ds has correct number of args");\
+        assert(curOpt->getArgStr(0), "sd", "correct string argument for -Ds");
+        assert(curOpt->getArgPosInt(0), -1, "-1 returned when trying to interpret string as int");
+    }
+    
+    curOpt = cmdLineOption::findOpt("-Ib");
+    assert(curOpt != NULL, true, "existing cmd line option -Ib is found");
+    if(curOpt!=NULL){
+        assert(curOpt->getNumArgs(), 3, "-Ds has correct number of args");\
+        assert(curOpt->getArgStr(2), "dk", "correct string argument for -Ds");
+        assert(curOpt->getArgStr(0), "3454", "get integer argument as str");
+        assert(curOpt->getArgPosInt(0), 3454, "get integer argument as int");
+        assert(curOpt->getArgPwr2(0), -1, "get non pwr 2 integer argument as pwr 2");
+        assert(curOpt->getArgPwr2(1), 2048, "get integer argument");
+    }
+    
+    curOpt = cmdLineOption::findOpt("-ds");
+    assert(curOpt == NULL, true, "nonexistant -ds is not found");
+    
+    curOpt = cmdLineOption::findOpt("3454");
+    assert(curOpt == NULL, true, "Check non-tag 3454 is not found but instead collected with previous tag");
+    
+    
 
 }
