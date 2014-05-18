@@ -40,15 +40,15 @@ ParamsReg decodeInstReg(wordT instructionBin);
  ================ Execute Instructions ===============
  Each function emulates a different mips instruction. It is assumed that the opcode / modifier of the instruction binary has already been checked to match the relevant instruction. The  argument fields in the appropriate format are now extracted from the binary value. The state of the machine is represented by the mipsInterpreterCore.
  */
-void mips_f_add(MipsInterpreterCore* core, int instructionBin);
-void mips_f_addi(MipsInterpreterCore* core, int instructionBin);
-void mips_f_slti(MipsInterpreterCore* core, int instructionBin);
-void mips_f_slt(MipsInterpreterCore* core, int instructionBin);
-void mips_f_beq(MipsInterpreterCore* core, int instructionBin);
-void mips_f_bne(MipsInterpreterCore* core, int instructionBin);
-void mips_f_j(MipsInterpreterCore* core, int instructionBin);
-void mips_f_lw(MipsInterpreterCore* core, int instructionBin);
-void mips_f_sw(MipsInterpreterCore* core, int instructionBin);
+int mips_f_add(MipsInterpreterCore* core, int instructionBin);
+int mips_f_addi(MipsInterpreterCore* core, int instructionBin);
+int mips_f_slti(MipsInterpreterCore* core, int instructionBin);
+int mips_f_slt(MipsInterpreterCore* core, int instructionBin);
+int mips_f_beq(MipsInterpreterCore* core, int instructionBin);
+int mips_f_bne(MipsInterpreterCore* core, int instructionBin);
+int mips_f_j(MipsInterpreterCore* core, int instructionBin);
+int mips_f_lw(MipsInterpreterCore* core, int instructionBin);
+int mips_f_sw(MipsInterpreterCore* core, int instructionBin);
 
 /*
  ================ Add Instructions To Interpreter ===============

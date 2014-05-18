@@ -12,9 +12,10 @@ using namespace std;
  ======== MipsInterpreterCore(MemorySystemGeneric* memorySystem) ========
  Initializes register values and binds core to memorySystem
  */
-MipsInterpreterCore::MipsInterpreterCore(MemorySystemGeneric* memorySystem){
+MipsInterpreterCore::    MipsInterpreterCore(MemorySystemGeneric* memorySystemInst, MemorySystemGeneric* memorySystemData){
     resetRegs();
-    m_memorySystem = memorySystem;
+    m_memorySystemInst = memorySystemInst;
+    m_memorySystemData = memorySystemData;
 }
 
 
@@ -106,16 +107,26 @@ void MipsInterpreterCore::relJumpPc(long val){
 
 /*
  ======== void fetchInstruction() ========
- Fetch the instruction from memory at the current PC address
+ Fetch the instruction from instruction memory system at the current PC address
  */
 wordT MipsInterpreterCore::fetchInstruction(){
-    return m_memorySystem->retrieveWord(m_regPc);
+    return m_memorySystemInst->retrieveWord(m_regPc);
 }
 
 /*
- ======== MemorySystemGeneric* getMemorySystem() ========
- eturn a pointer to the bound memory system
+ ======== void setWordData(wordT address, wordT data) ========
+ Set a word in the data memory system
  */
-MemorySystemGeneric* MipsInterpreterCore::getMemorySystem(){
-    return m_memorySystem;
+void MipsInterpreterCore::setWordData(wordT address, wordT data){
+    m_memorySystemData->setWord(address, data);
 }
+
+/*
+ ======== wordT retrieveWordData(wordT address) ========
+ Retrieve a word from the data memory system
+ */
+
+wordT MipsInterpreterCore::retrieveWordData(wordT address){
+    return m_memorySystemData->retrieveWord(address);
+}
+

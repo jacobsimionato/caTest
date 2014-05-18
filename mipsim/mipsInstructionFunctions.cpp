@@ -18,6 +18,7 @@ using namespace std;
 /*
  ================ Decode Instructions ===============
  Decode different types of instructions into the corresponding parameter struct by extracting bit fields
+ Returns the number of cycles that is needed by the instruction to complete
  */
 ParamsImm decodeInstImm(wordT instructionBin){
     ParamsImm params;
@@ -45,25 +46,27 @@ ParamsReg decodeInstReg(wordT instructionBin){
 /*
  add
  */
-void mips_f_add(MipsInterpreterCore* core, int instructionBin){
+int mips_f_add(MipsInterpreterCore* core, int instructionBin){
     ParamsReg params = decodeInstReg(instructionBin);
     wordST result = core->getRegSig(params.s) + core->getRegSig(params.t);
     core->setRegSig(params.d, result);
+    return 4;
 }
 
 /*
  addi
  */
-void mips_f_addi(MipsInterpreterCore* core, int instructionBin){
+int mips_f_addi(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT result = core->getRegSig(params.s) + static_cast<halfST>(params.C);
     core->setRegSig(params.t, result);
+    return 4;
 }
 
 /*
  slti
  */
-void mips_f_slti(MipsInterpreterCore* core, int instructionBin){
+int mips_f_slti(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT result;
     if(core->getRegSig(params.s) < static_cast<halfST>(params.C)){
@@ -72,12 +75,13 @@ void mips_f_slti(MipsInterpreterCore* core, int instructionBin){
         result = 0;
     }
     core->setRegSig(params.t, result);
+    return 4;
 }
 
 /*
  slt
  */
-void mips_f_slt(MipsInterpreterCore* core, int instructionBin){
+int mips_f_slt(MipsInterpreterCore* core, int instructionBin){
     ParamsReg params = decodeInstReg(instructionBin);
     wordT result;
     if(core->getRegSig(params.s) < core->getRegSig(params.t)){
@@ -86,12 +90,13 @@ void mips_f_slt(MipsInterpreterCore* core, int instructionBin){
         result = 0;
     }
     core->setRegSig(params.d, result);
+    return 4;
 }
 
 /*
  beq
  */
-void mips_f_beq(MipsInterpreterCore* core, int instructionBin){
+int mips_f_beq(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     if(core->getRegUns(params.s) == core->getRegUns(params.t)){
         //Interpret offset as signed 16 bit integer
@@ -100,12 +105,13 @@ void mips_f_beq(MipsInterpreterCore* core, int instructionBin){
         long jumpOffsetBytes = jumpOffsetWords * 4;
         core->relJumpPc(jumpOffsetBytes);
     }
+    return 3;
 }
 
 /*
  bne
  */
-void mips_f_bne(MipsInterpreterCore* core, int instructionBin){
+int mips_f_bne(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     if(core->getRegUns(params.s) != core->getRegUns(params.t)){
         //Interpret offset as signed 16 bit integer
@@ -114,12 +120,13 @@ void mips_f_bne(MipsInterpreterCore* core, int instructionBin){
         long jumpOffsetBytes = jumpOffsetWords * 4;
         core->relJumpPc(jumpOffsetBytes);
     }
+    return 3;
 }
 
 /*
  j
  */
-void mips_f_j(MipsInterpreterCore* core, int instructionBin){
+int mips_f_j(MipsInterpreterCore* core, int instructionBin){
     ParamsJump params = decodeInstJump(instructionBin);
     
     wordT lower28bits = params.C * 4;
@@ -127,26 +134,29 @@ void mips_f_j(MipsInterpreterCore* core, int instructionBin){
     curPc = curPc & 0xF0000000;
     curPc = curPc | lower28bits;
     core->setPc(curPc - 4);
+    return 2;
 }
 
 /*
  lw
  */
-void mips_f_lw(MipsInterpreterCore* core, int instructionBin){
+int mips_f_lw(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT address = core->getRegUns(params.s) + static_cast<halfST>(params.C);
-    wordT data = core->getMemorySystem()->retrieveWord(address);
+    wordT data = core->retrieveWordData(address);
     core->setRegUns(params.t, data);
+    return 5;
 }
 
 /*
  sw
  */
-void mips_f_sw(MipsInterpreterCore* core, int instructionBin){
+int mips_f_sw(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT address = core->getRegUns(params.s) + static_cast<halfST>(params.C);
     wordT data = core->getRegUns(params.t);
-    core->getMemorySystem()->setWord(address, data);
+    core->setWordData(address, data);
+    return 4;
 }
 
 
@@ -158,13 +168,13 @@ void addInstructionsToInterpreter(MipsInterpreter &interpreter){
     /*
      The attributes of the instructions are packaged with one of the functions above by adding a function pointer to the MipsInstructionDef object.
      */
-    interpreter.addInstructionDef(MipsInstructionDef("add", 0, 32, 4, mips_f_add));
-    interpreter.addInstructionDef(MipsInstructionDef("addi", 8, 0, 4, mips_f_addi));
-    interpreter.addInstructionDef(MipsInstructionDef("slti", 10, 0, 4, mips_f_slti));
-    interpreter.addInstructionDef(MipsInstructionDef("slt", 0, 42, 4, mips_f_slt));
-    interpreter.addInstructionDef(MipsInstructionDef("beq", 4, 0, 3, mips_f_beq));
-    interpreter.addInstructionDef(MipsInstructionDef("bne", 5, 0, 3, mips_f_bne));
-    interpreter.addInstructionDef(MipsInstructionDef("j", 2, 0, 2, mips_f_j));
-    interpreter.addInstructionDef(MipsInstructionDef("lw", 35, 0, 5, mips_f_lw));
-    interpreter.addInstructionDef(MipsInstructionDef("sw", 43, 0, 4, mips_f_sw));
+    interpreter.addInstructionDef(MipsInstructionDef("add", 0, 32, mips_f_add));
+    interpreter.addInstructionDef(MipsInstructionDef("addi", 8, 0, mips_f_addi));
+    interpreter.addInstructionDef(MipsInstructionDef("slti", 10, 0, mips_f_slti));
+    interpreter.addInstructionDef(MipsInstructionDef("slt", 0, 42, mips_f_slt));
+    interpreter.addInstructionDef(MipsInstructionDef("beq", 4, 0, mips_f_beq));
+    interpreter.addInstructionDef(MipsInstructionDef("bne", 5, 0, mips_f_bne));
+    interpreter.addInstructionDef(MipsInstructionDef("j", 2, 0, mips_f_j));
+    interpreter.addInstructionDef(MipsInstructionDef("lw", 35, 0, mips_f_lw));
+    interpreter.addInstructionDef(MipsInstructionDef("sw", 43, 0, mips_f_sw));
 }

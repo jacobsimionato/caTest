@@ -92,7 +92,7 @@ void testTimer_print(){
 void testExecutionSpeedPerformance(){
     cout << "================== Testing Random Arithmetic Performance ===================" << endl;
     MemorySystem memorySystem;
-    MipsInterpreter mipsInterpreter(&memorySystem);
+    MipsInterpreter mipsInterpreter(&memorySystem, &memorySystem);
     addInstructionsToInterpreter(mipsInterpreter);
     
     //Set registers to ascending numbers

@@ -83,7 +83,7 @@ int main(int argc, const char * argv[]){
     
     //Setup main environment
     MemorySystem memorySystem;
-    MipsInterpreter mipsInterpreter(&memorySystem);
+    MipsInterpreter mipsInterpreter(&memorySystem, &memorySystem);
     addInstructionsToInterpreter(mipsInterpreter);
     
     if(g_verbose){
@@ -162,7 +162,27 @@ int main(int argc, const char * argv[]){
                     mipsInterpreter.fetchAndInterpret(numInstrs);
                     executeSuccess = true;
                 }
+            }else if(cmdVec[0] == "pi" && cmdVec.size() == 2){
+                unsigned int address;
+                if(hexStrToInt(cmdVec[1], address)){
+                    cout << "Probe instruction cache" << endl;
+                    
+                    
+                     
+                    executeSuccess = true;
+                }
+            }else if(cmdVec[0] == "pd" && cmdVec.size() == 2){
+                unsigned int address;
+                if(hexStrToInt(cmdVec[1], address)){
+                    cout << "Probe data cache" << endl;
+                    
+                    
+                    
+                    executeSuccess = true;
+                }
             }
+            
+            
             //If no command was matched, then print warning
             if(!executeSuccess){
                 if(g_verbose){

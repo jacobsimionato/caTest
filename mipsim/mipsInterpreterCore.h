@@ -22,7 +22,7 @@
 class MipsInterpreterCore{
 public:
     //Initializes register values to zero and sets memory system pointer to null
-    MipsInterpreterCore(MemorySystemGeneric* memorySystem);
+    MipsInterpreterCore(MemorySystemGeneric* memorySystemInst, MemorySystemGeneric* memorySystemData);
     
     //Initializes register values to zero;
     void resetRegs();
@@ -48,7 +48,11 @@ public:
     wordT fetchInstruction();
     
     //Return a pointer to the bound memory system
-    MemorySystemGeneric* getMemorySystem();
+    MemorySystemGeneric* getMemorySystemInst();
+    
+    //Word IO from Memory system
+    void setWordData(wordT address, wordT data);
+    wordT retrieveWordData(wordT address);
 
 private:
     
@@ -56,7 +60,8 @@ private:
     wordT m_regGp[NUM_GP_REGS];
     
     //Pointer to memory system associated with this core
-    MemorySystemGeneric* m_memorySystem;
+    MemorySystemGeneric* m_memorySystemInst;
+    MemorySystemGeneric* m_memorySystemData;
 };
 
 #endif /* defined(__mipsim__mipsInterpreterCore__) */

@@ -17,7 +17,7 @@ using namespace std;
  ======== MipsInterpreter(MemorySystemGeneric* memorySystem) ========
  Construct mips interpreter which must be bound to an existing memorySystem
  */
-MipsInterpreter::MipsInterpreter(MemorySystemGeneric* memorySystem): m_interpreterCore(memorySystem){
+MipsInterpreter::MipsInterpreter(MemorySystemGeneric* memorySystemInst, MemorySystemGeneric* memorySystemData): m_interpreterCore(memorySystemInst, memorySystemData){
     m_instrCount = 0;
     m_cycleCount = 0;
     
@@ -66,14 +66,14 @@ int MipsInterpreter::interpret(wordT instructionBin){
     }
     
     //Execute instruction
-    instructionDef->execute(&m_interpreterCore, instructionBin);
+    int cyclesElapsed = instructionDef->execute(&m_interpreterCore, instructionBin);
     //Update statistics for this particular instruction type
     instructionDef->numTimesExecuted++;
     
     m_interpreterCore.incPc(4);
     
     //Maintain overall statistics
-    m_cycleCount += instructionDef->cpi;
+    m_cycleCount += cyclesElapsed;
     m_instrCount++;
     
     if(m_verbose){
@@ -143,6 +143,23 @@ void MipsInterpreter::printStats(){
  */
 MipsInterpreterCore* MipsInterpreter::getCore(){
     return &m_interpreterCore;
+}
+
+/*
+ ======== Count accessors / mutators ========
+ Access and modify cycle accounting system
+ */
+int MipsInterpreter::getCycleCount(){
+    return m_cycleCount;
+}
+
+int MipsInterpreter::getInstrCount(){
+    return m_instrCount;
+}
+
+void MipsInterpreter::resetCounts(){
+    m_cycleCount = 0;
+    m_instrCount = 0;
 }
 
 /*

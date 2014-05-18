@@ -27,7 +27,7 @@ class MipsInstructionDef;
 class MipsInterpreter{
 public:
     //Construct mips interpreter which must be bound to an existing memorySystem
-    MipsInterpreter(MemorySystemGeneric* memorySystem);
+    MipsInterpreter(MemorySystemGeneric* memorySystemInst, MemorySystemGeneric* memorySystemData);
     
     //Fetches and interprets several instructions one-by-one
     int fetchAndInterpret(int num = 1);
@@ -49,6 +49,11 @@ public:
     
     //Return a pointer to the internal interpreterCore instance
     MipsInterpreterCore* getCore();
+    
+    //Access instance variables
+    int getCycleCount();
+    int getInstrCount();
+    void resetCounts();
     
     //Sets verbose mode of mipsInterpreter
     void setVerbose(bool val);

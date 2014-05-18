@@ -19,6 +19,7 @@
 		1666FAE418E7E05000CC03F8 /* mipsInterpreterCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE218E7E05000CC03F8 /* mipsInterpreterCore.cpp */; };
 		1666FAE718E7E10200CC03F8 /* memorySystemGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */; };
 		167E452818E9127B00A00AA3 /* patternMatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 167E452618E9127B00A00AA3 /* patternMatchers.cpp */; };
+		16B681C31928B4DD0040DBF2 /* cacheGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B681C11928B4DD0040DBF2 /* cacheGeneric.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -59,6 +60,8 @@
 		1666FAE618E7E10200CC03F8 /* memorySystemGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memorySystemGeneric.h; sourceTree = "<group>"; };
 		167E452618E9127B00A00AA3 /* patternMatchers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = patternMatchers.cpp; sourceTree = "<group>"; };
 		167E452718E9127B00A00AA3 /* patternMatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patternMatchers.h; sourceTree = "<group>"; };
+		16B681C11928B4DD0040DBF2 /* cacheGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cacheGeneric.cpp; sourceTree = "<group>"; };
+		16B681C21928B4DD0040DBF2 /* cacheGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cacheGeneric.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +105,8 @@
 				167E452718E9127B00A00AA3 /* patternMatchers.h */,
 				1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */,
 				1666FAE618E7E10200CC03F8 /* memorySystemGeneric.h */,
+				16B681C11928B4DD0040DBF2 /* cacheGeneric.cpp */,
+				16B681C21928B4DD0040DBF2 /* cacheGeneric.h */,
 				1666FAD218E7AFAE00CC03F8 /* memorySystem.cpp */,
 				1666FAD318E7AFAE00CC03F8 /* memorySystem.h */,
 				1666FAD518E7AFF600CC03F8 /* mipsInterpreter.cpp */,
@@ -171,6 +176,7 @@
 			files = (
 				160D757718F3945C0074FC0C /* mipSimPerformance.cpp in Sources */,
 				1666FAE718E7E10200CC03F8 /* memorySystemGeneric.cpp in Sources */,
+				16B681C31928B4DD0040DBF2 /* cacheGeneric.cpp in Sources */,
 				167E452818E9127B00A00AA3 /* patternMatchers.cpp in Sources */,
 				164917001924F8BD00214D83 /* cmdLineOption.cpp in Sources */,
 				1666FAE418E7E05000CC03F8 /* mipsInterpreterCore.cpp in Sources */,

@@ -205,7 +205,7 @@ void runPatternMatchersTests(){
 //Run mipsInterpreter tests
 void runMipsInterpreterTests(){
     MemorySystem memorySystem;
-    MipsInterpreter mipsInterpreter(&memorySystem);
+    MipsInterpreter mipsInterpreter(&memorySystem, &memorySystem);
     addInstructionsToInterpreter(mipsInterpreter);
     
     //Check all register values are initialized as zero
@@ -220,6 +220,7 @@ void runMipsInterpreterTests(){
     memorySystem.setWord(0x80000, genInstAdd(1, 2, 3));
     memorySystem.setWord(0x80004, genInstAdd(1, 2, 3));
     mipsInterpreter.getCore()->setPc(0x80000);
+    mipsInterpreter.resetCounts();
     
     //Test execution of instructions
     //Run first instruction
@@ -227,15 +228,23 @@ void runMipsInterpreterTests(){
     assert(mipsInterpreter.getCore()->getRegUns(3), (unsigned int) 0, "check 0+0 = 0");
     assert(mipsInterpreter.getCore()->getPc(), (unsigned int) 0x80004, "check pc inc 4 after one instruction");
     assert(interpResult, 0, "check interpreter returns 0 under normal operation");
+    assert(mipsInterpreter.getInstrCount(), 1, "instruction count after add");
+    assert(mipsInterpreter.getCycleCount(), 4, "cycle count after add");
     //Run second instruction
     mipsInterpreter.getCore()->setRegUns(1, 4564);
     mipsInterpreter.getCore()->setRegUns(2, 1123434);
     interpResult = mipsInterpreter.fetchAndInterpret(1);
     
+    assert(mipsInterpreter.getInstrCount(), 2, "instruction count after two adds");
+    assert(mipsInterpreter.getCycleCount(), 8, "cycle count after two adds");
     
     assert(mipsInterpreter.getCore()->getRegUns(3), (unsigned int) 1127998, "check 0+0 = 1127998");
     assert(mipsInterpreter.getCore()->getPc(), (unsigned int) 0x80008, "check pc inc 8 after two instructions");
     assert(interpResult, 0, "check interpreter returns 0 under normal operation");
+    
+    mipsInterpreter.resetCounts();
+    assert(mipsInterpreter.getInstrCount(), 0, "instruction count zeroed after reset");
+    assert(mipsInterpreter.getCycleCount(), 0, "cycle count zeroed after reset");
     
     memorySystem.setWord(0x0, 0xFFFFFFFF);
     mipsInterpreter.getCore()->setPc(0x0);

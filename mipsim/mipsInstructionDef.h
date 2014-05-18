@@ -38,10 +38,10 @@ public:
     int numTimesExecuted;
     
     //Pointer to 'execute' function which takes the instruction binary and an interpreterCore reference and carries out the instruction by changing the state of the interpreterCore and associated memorySystem
-    void (*execute)(MipsInterpreterCore* core, int instructionBin);
+    int (*execute)(MipsInterpreterCore* core, int instructionBin);
     
     //Constructor requires values with which to initialize the attributes of the InstructionDef, including a pointer to a function which executes the instruction
-    MipsInstructionDef(const char* name_input, char opcode_input, char modifier_input, char cpi_input, void (*execute_input)(MipsInterpreterCore* core, int instructionBin) );
+    MipsInstructionDef(const char* name_input, char opcode_input, char modifier_input, int (*execute_input)(MipsInterpreterCore* core, int instructionBin) );
     
     //Prints all of the attributes of the object including name, opcode, modifier, cpi
     void print();

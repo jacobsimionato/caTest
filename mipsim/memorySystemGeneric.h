@@ -23,9 +23,6 @@ public:
     
     //Sets memory system to verbose or non-verbose modes
     virtual void setVerbose(bool m_verbose_set = true) = 0;
-    
-    //Print a summary of the memory system state
-    virtual void printSummary() = 0;
 };
 
 #endif /* defined(__mipsim__memorySystemGeneric__) */
