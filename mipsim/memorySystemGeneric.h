@@ -1,10 +1,8 @@
 //
 //  memorySystemGeneric.h
 //  mipsim
-//
-//  Created by Jacob Simionato on 30/03/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
 
 #ifndef __mipsim__memorySystemGeneric__
 #define __mipsim__memorySystemGeneric__
@@ -13,6 +11,10 @@
 
 #include "mipsTypes.h"
 
+/*
+ ====================== MemorySystemGeneric ======================
+ An abstract class which defines the memory system interface in order to allow different memory systems to be easily substituted and compared at a later time.
+ */
 class MemorySystemGeneric{
 public:
     //Exposed data I/O interface

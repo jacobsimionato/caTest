@@ -1,16 +1,19 @@
 //
 //  mipsInstructionDef.cpp
 //  mipsim
-//
-//  Created by Jacob Simionato on 30/03/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
+
 #include <cstring>
 
 #include "mipsInstructionDef.h"
 
 using namespace std;
 
+/*
+ ======== Constructor ========
+ Requires values with which to initialize the attributes of the InstructionDef, including a pointer to a function which executes the instruction
+ */
 MipsInstructionDef::MipsInstructionDef(const char* name_input, char opcode_input, char modifier_input, char cpi_input, void (*execute_input)(MipsInterpreterCore* core, int instructionBin) ){
     strncpy(name, name_input, MAX_NAME_LENGTH);
     opcode = opcode_input;
@@ -20,6 +23,10 @@ MipsInstructionDef::MipsInstructionDef(const char* name_input, char opcode_input
     numTimesExecuted = 0;
 }
 
+/*
+ ======== void print() ========
+ Prints a summary of the instructionDef's attributes
+ */
 void MipsInstructionDef::print(){
     cout << "Instruction: " << name << " ---- ";
     cout << "opcode: " << static_cast<int>(opcode);
@@ -30,6 +37,11 @@ void MipsInstructionDef::print(){
     cout << endl;
 }
 
+
+/*
+ ======== void printFreq() ========
+ Prints the name and number of times the instruction has been executed
+ */
 void MipsInstructionDef::printFreq(){
     cout << name << ": " << numTimesExecuted << endl;
 }

@@ -1,9 +1,7 @@
 //
 //  memorySystemGeneric.cpp
 //  mipsim
-//
-//  Created by Jacob Simionato on 30/03/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
 
 #include "memorySystemGeneric.h"

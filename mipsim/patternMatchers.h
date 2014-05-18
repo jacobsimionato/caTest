@@ -1,67 +1,49 @@
 //
 //  patternMatchers.h
 //  mipsim
-//
-//  Created by Jacob Simionato on 31/03/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
 
 #ifndef __mipsim__patternMatchers__
 #define __mipsim__patternMatchers__
 
 #include <iostream>
-#include <regex>
 #include <vector>
 #include <string>
 #include <sstream>
 
-bool isInChars(char inputChar, std::string checkList);
+/*
+ =================== Pattern Matching ===================
+ Process input command strings and match patterns to interpret commands
+ */
 
-void removeComment(std::string &input, char separator = '#');
-
-void padEquals(std::string &input);
-
+//Takes a string and tokenizes it using the provided delimiters, returning a vector of strings representing each token. Inspired by the PHP "explode" function.
 std::vector<std::string> explode(std::string input, std::string separators = " \n\r");
 
-void printStrVector(const std::vector<std::string> input);
+//Returns true if the input character matches any characters in the string. Used by explode to check for delimiters.
+bool isInChars(char inputChar, std::string checkList);
 
-void printStrInts(const std::string input);
+//Takes an input string and checks if there is a comment at the end of the line indicated by the provided separator character. If a comment is found, the string is truncated to remove it.
+void removeComment(std::string &input, char separator = '#');
 
-//int decStrToInt(std::string input);
+//Takes an input string and returns a new string where each equals sign in the string has a space character inserted immediately before and after it. eg "num=5" becomes "num = 5"
+void padEquals(std::string &input);
 
-//int hexStrToInt(std::string input);
-
+//Attempts to convert a string containing hex digits to an integer
 bool hexStrToInt(const std::string &input, unsigned int &output);
 
+//Attempts to convert a string containing decimal digits to an integer
 bool decStrToInt(const std::string &input, unsigned int &output);
 
 
-bool parseRegExp(std::string inputLine, std::string instrPatternString, std::vector<std::string> &result);
+/*
+ =================== Pattern Matching Debug Helpers ===================
+ */
 
-bool saveCharImmediate(std::string &input, int &pos, std::vector<int> &output); //to find inital character
+//Prints a string vector to help debug the results of 'explode'
+void printStrVector(const std::vector<std::string> input);
 
-bool checkCharImmediate(std::string &input, int &pos, char checkChar);
-
-//bool saveDecImmediate(std::string &input, int &pos, std::vector<int> &output);
-
-bool checkAdvanceEquals(std::string &input, int &pos);
-
-//bool saveHexImmediate(std::string &input, int &pos, std::vector<int> &output);
-
-bool advancePastWhiteSpace(std::string &input, int pos); //returns false if we reach end of line
-
-std::vector<int> parseInput(std::string input);
-
-//bool checkLetterImmediate(
+//Prints a string as the integer character values to help debug input
+void printStrInts(const std::string input);
 
 #endif /* defined(__mipsim__patternMatchers__) */
-
-/*
-1. char saveCharImmediate(string input, int pos, vector<int> output) //to find inital character
-bool checkCharImmediate(string input, int pos, char checkChar)
-2. bool saveDecImmediate(string input, int pos, vector<int> output)
-3. bool checkAdvanceEquals(string input, int pos)
-4. bool saveHexImmediate(string input, int pos, vector<int> output
- bool advancePastWhiteSpace(string input, int pos) //returns false if we reach end of line
-
-*/

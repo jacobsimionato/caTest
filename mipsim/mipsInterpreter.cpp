@@ -1,11 +1,11 @@
 //
 //  mipsInterpreter.cpp
 //  mipsim
-//
-//  Created by Jacob Simionato on 30/03/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
+
 #include <iomanip>
+#include <stdexcept>
 
 #include "mipsInterpreter.h"
 #include "mipsInstructionFunctions.h"
@@ -13,6 +13,10 @@
 
 using namespace std;
 
+/*
+ ======== MipsInterpreter(MemorySystemGeneric* memorySystem) ========
+ Construct mips interpreter which must be bound to an existing memorySystem
+ */
 MipsInterpreter::MipsInterpreter(MemorySystemGeneric* memorySystem): m_interpreterCore(memorySystem){
     m_instrCount = 0;
     m_cycleCount = 0;
@@ -20,6 +24,11 @@ MipsInterpreter::MipsInterpreter(MemorySystemGeneric* memorySystem): m_interpret
     m_verbose = false;
 }
 
+/*
+ ======== int fetchAndInterpret(int num) ========
+ Fetches and interprets num instructions one-by-one
+ If there is an error in interpreting an instruction, exit immediately and return the error code
+ */
 int MipsInterpreter::fetchAndInterpret(int num){
     int result;
     for(int i = 0; i < num; i++){
@@ -33,14 +42,37 @@ int MipsInterpreter::fetchAndInterpret(int num){
     return 0;
 }
 
+/*
+ ======== int interpret(wordT instructionBin) ========
+ Interprets the given instruction encoded as a binary word
+ Returns 0 if instruction successfully interpreted or 1 if key could not be found
+ */
 int MipsInterpreter::interpret(wordT instructionBin){
+    //Generate a key for the instructionDefs table
     int key = genKeyFromInstruction(instructionBin);
-    MipsInstructionDef* instructionDef = &m_instructionDefs.at(key);
     
+    MipsInstructionDef* instructionDef = NULL;
+    
+    //Try to find matching InstructionDef instance in std::map search tree using key
+    try{
+        instructionDef = &m_instructionDefs.at(key);
+    }
+    //Catch error if key not found, ie instruction binary code is invalid
+    catch (const out_of_range &outOfRangeE) {
+        if(m_verbose){
+            cout << "MipsInterpreter::interpret ERROR: instruction key not found" << outOfRangeE.what();
+        }
+        return 1;
+    }
+    
+    //Execute instruction
     instructionDef->execute(&m_interpreterCore, instructionBin);
+    //Update statistics for this particular instruction type
     instructionDef->numTimesExecuted++;
     
     m_interpreterCore.incPc(4);
+    
+    //Maintain overall statistics
     m_cycleCount += instructionDef->cpi;
     m_instrCount++;
     
@@ -51,13 +83,20 @@ int MipsInterpreter::interpret(wordT instructionBin){
     return 0;
 }
 
+/*
+ ======== void addInstructionDef(MipsInstructionDef instructionDef) ========
+ Add an InstructionDef instance to the internal table
+ */
 void MipsInterpreter::addInstructionDef(MipsInstructionDef instructionDef){
     //Create key by placing opcode in more significant position than modifier
     int key = (instructionDef.opcode << 6) + instructionDef.modifier;
     m_instructionDefs.insert(pair<int,MipsInstructionDef>(key,instructionDef));
 }
 
-
+/*
+ ======== void printInstructionDefs() ========
+ Print key-value pairs contained in m_instructionDefs for debugging purposes
+ */
 void MipsInterpreter::printInstructionDefs(){
     cout << "MipsInterpreter: Printing Instruction Defs" << endl;
     map<int, MipsInstructionDef>::iterator iter;
@@ -68,10 +107,18 @@ void MipsInterpreter::printInstructionDefs(){
     cout << endl;
 }
 
+/*
+ ======== void printRegisters() ========
+ Print the register values of the simulator core
+ */
 void MipsInterpreter::printRegisters(){
     m_interpreterCore.print();
 }
 
+/*
+ ======== void printStats() ========
+ Print the register values of the simulator core
+ */
 void MipsInterpreter::printStats(){
     cout << dec;
     //Uses the search keys of the map to print the frequency report for each instruction in the required order
@@ -90,40 +137,34 @@ void MipsInterpreter::printStats(){
     }
 }
 
+/*
+ ======== MipsInterpreterCore* getCore() ========
+ Return a pointer to the internal interpreterCore instance to allow register values to be tampered with etc.
+ */
 MipsInterpreterCore* MipsInterpreter::getCore(){
     return &m_interpreterCore;
 }
 
+/*
+ ======== void setVerbose(bool val) ========
+ Sets verbose mode of mipsInterpreter
+ */
 void MipsInterpreter::setVerbose(bool val){
     m_verbose = val;
 }
 
+/*
+ ======== int genKeyFromInstruction(wordT instructionBin) ========
+ Generates an integer search key from a binary instruction containing the opcode and modifier
+ */
 int MipsInterpreter::genKeyFromInstruction(wordT instructionBin){
     int opcode = (instructionBin >> 26) & 63;
     //If the opcode is zero, then include the modifier in the key
     if(opcode == 0){
         int modifier = instructionBin & 63;
+        //Modifier in least sigificant position and opcode in next most sigificant position
         return (opcode << 6) + modifier;
     }else{
         return opcode << 6;
     }
-}
-
-
-
-
-//Adds instruction definitions to the interpreter
-void addInstructionsToInterpreter(MipsInterpreter &interpreter){
-    /*
-     Add instruction defs corresponding to all 9 of the supported instructions. The behaviour of the instructions is defined by including a pointer to a function defined in "mipsInstructionFunctions.h"
-     */
-    interpreter.addInstructionDef(MipsInstructionDef("add", 0, 32, 4, mips_f_add));
-    interpreter.addInstructionDef(MipsInstructionDef("addi", 8, 0, 4, mips_f_addi));
-    interpreter.addInstructionDef(MipsInstructionDef("slti", 10, 0, 4, mips_f_slti));
-    interpreter.addInstructionDef(MipsInstructionDef("slt", 0, 42, 4, mips_f_slt));
-    interpreter.addInstructionDef(MipsInstructionDef("beq", 4, 0, 3, mips_f_beq));
-    interpreter.addInstructionDef(MipsInstructionDef("bne", 5, 0, 3, mips_f_bne));
-    interpreter.addInstructionDef(MipsInstructionDef("j", 2, 0, 2, mips_f_j));
-    interpreter.addInstructionDef(MipsInstructionDef("lw", 35, 0, 5, mips_f_lw));
-    interpreter.addInstructionDef(MipsInstructionDef("sw", 43, 0, 4, mips_f_sw));
 }

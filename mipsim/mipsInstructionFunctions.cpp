@@ -1,10 +1,8 @@
 //
 //  mipsInstructionFunctions.cpp
 //  mipsim
-//
-//  Created by Jacob Simionato on 30/03/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
 
 #include "mipsInstructionFunctions.h"
 #include <math.h>
@@ -15,13 +13,11 @@
 
 using namespace std;
 
-/*
- Instruction decode functions extract the bit fields from each instruction
- Each parameter field is saved as an integer into the destination array in the order they appear in the binary number from most significant to least significant section
- */
+
 
 /*
- Decode different types of instructions in the corresponding parameter struct by extracting bit fields
+ ================ Decode Instructions ===============
+ Decode different types of instructions into the corresponding parameter struct by extracting bit fields
  */
 ParamsImm decodeInstImm(wordT instructionBin){
     ParamsImm params;
@@ -92,7 +88,9 @@ void mips_f_slt(MipsInterpreterCore* core, int instructionBin){
     core->setRegSig(params.d, result);
 }
 
-
+/*
+ beq
+ */
 void mips_f_beq(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     if(core->getRegUns(params.s) == core->getRegUns(params.t)){
@@ -104,7 +102,9 @@ void mips_f_beq(MipsInterpreterCore* core, int instructionBin){
     }
 }
 
-
+/*
+ bne
+ */
 void mips_f_bne(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     if(core->getRegUns(params.s) != core->getRegUns(params.t)){
@@ -116,7 +116,9 @@ void mips_f_bne(MipsInterpreterCore* core, int instructionBin){
     }
 }
 
-
+/*
+ j
+ */
 void mips_f_j(MipsInterpreterCore* core, int instructionBin){
     ParamsJump params = decodeInstJump(instructionBin);
     
@@ -124,11 +126,12 @@ void mips_f_j(MipsInterpreterCore* core, int instructionBin){
     wordT curPc = core->getPc();
     curPc = curPc & 0xF0000000;
     curPc = curPc | lower28bits;
-    //cout << "jumpOffsetBytes: " << jumpOffsetBytes << endl;
     core->setPc(curPc - 4);
 }
 
-
+/*
+ lw
+ */
 void mips_f_lw(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT address = core->getRegUns(params.s) + static_cast<halfST>(params.C);
@@ -136,7 +139,9 @@ void mips_f_lw(MipsInterpreterCore* core, int instructionBin){
     core->setRegUns(params.t, data);
 }
 
-
+/*
+ sw
+ */
 void mips_f_sw(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT address = core->getRegUns(params.s) + static_cast<halfST>(params.C);
@@ -144,3 +149,22 @@ void mips_f_sw(MipsInterpreterCore* core, int instructionBin){
     core->getMemorySystem()->setWord(address, data);
 }
 
+
+/*
+ ================ Add Instructions To Interpreter ===============
+ Constructs MipsIntstructionDef objects and links them to each of the instruction functions defined above. Adds the objects to the MipsInterpreter.
+ */
+void addInstructionsToInterpreter(MipsInterpreter &interpreter){
+    /*
+     The attributes of the instructions are packaged with one of the functions above by adding a function pointer to the MipsInstructionDef object.
+     */
+    interpreter.addInstructionDef(MipsInstructionDef("add", 0, 32, 4, mips_f_add));
+    interpreter.addInstructionDef(MipsInstructionDef("addi", 8, 0, 4, mips_f_addi));
+    interpreter.addInstructionDef(MipsInstructionDef("slti", 10, 0, 4, mips_f_slti));
+    interpreter.addInstructionDef(MipsInstructionDef("slt", 0, 42, 4, mips_f_slt));
+    interpreter.addInstructionDef(MipsInstructionDef("beq", 4, 0, 3, mips_f_beq));
+    interpreter.addInstructionDef(MipsInstructionDef("bne", 5, 0, 3, mips_f_bne));
+    interpreter.addInstructionDef(MipsInstructionDef("j", 2, 0, 2, mips_f_j));
+    interpreter.addInstructionDef(MipsInstructionDef("lw", 35, 0, 5, mips_f_lw));
+    interpreter.addInstructionDef(MipsInstructionDef("sw", 43, 0, 4, mips_f_sw));
+}

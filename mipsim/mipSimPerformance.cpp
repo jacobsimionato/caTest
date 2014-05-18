@@ -1,10 +1,8 @@
 //
 //  mipSimPerformance.cpp
 //  mipsim
-//
-//  Created by Jacob Simionato on 8/04/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
 
 #include "mipSimPerformance.h"
 
@@ -16,31 +14,81 @@
 
 using namespace std;
 
-//Timer Stuff
+/*
+ Generate binary-encoded 32bit MIPS instructions for debugging purposes
+ */
+//Set the bit fields in register and immediate instruction formats
+int setInstFieldsReg(int input, int s, int t, int d){
+    input = input & ~(32767 << 11);
+    input += s << 21;
+    input += t << 16;
+    input += d << 11;
+    return input;
+}
+
+int setInstFieldsImm(int input, int s, int t, int C){
+    input = input & ~(67108863);
+    input += s << 21;
+    input += t << 16;
+    input += C;
+    return input;
+}
+
+//Generates specific instructions with fixed opcode and variable parameter fields
+wordT genInstAdd(int s, int t, int d){
+    return setInstFieldsReg(0x20, s, t, d);
+}
+
+wordT genInstAddi(int s, int t, int C){
+    return setInstFieldsImm(0x20000000, s, t, C);
+}
+
+wordT genInstSw(int s, int t, int C){
+    return setInstFieldsImm(0xAC000000, s, t, C);
+}
+
+wordT genInstLw(int s, int t, int C){
+    return setInstFieldsImm(0x8C000000, s, t, C);
+}
+
+
+/*
+ =================== Instruction Generation ===================
+ Generate binary-encoded 32bit MIPS instructions for debugging purposes
+ */
+//Get current time since unix epoch in milliseconds
 long testTimer_getCurrentTimeMillis(){
     timeval time;
     gettimeofday(&time, NULL);
     return (time.tv_sec * 1000) + (time.tv_usec / 1000);
 }
 
+//Global variables to store the timer offset since epoch and name
 unsigned long testTimer_startTime = testTimer_getCurrentTimeMillis();
 string testTime_name;
 
+//Start the duration timer and assign a name which will be used to print later
 void testTimer_start(string name){
     testTimer_startTime = testTimer_getCurrentTimeMillis();
     testTime_name = name;
 }
 
+//Get the current number of milliseconds since start time
 long testTimer_getDurationMillis(){
     return testTimer_getCurrentTimeMillis() - testTimer_startTime;
 }
 
+//Print the timer name and duration since start
 void testTimer_print(){
     float durationSeconds = testTimer_getDurationMillis() / 1000.0;
     cout << "TIMER: " << testTime_name << " - " << durationSeconds << " seconds" << endl;
 }
 
-
+/*
+ =================== Performance Test Suite ===================
+ Runs different simulation tasks and times them to determine performance
+ */
+//Runs three instructions (add, addi, sw) in succession from random spot in memory 1 000 000 times
 void testExecutionSpeedPerformance(){
     cout << "================== Testing Random Arithmetic Performance ===================" << endl;
     MemorySystem memorySystem;
@@ -53,74 +101,39 @@ void testExecutionSpeedPerformance(){
     }
     
     srand(time(0));
-    testTimer_start("2 000 000 random operations");
+    testTimer_start("3 000 000 random operations");
     for(int i=0; i < 1000000; i++){
         int PC = rand()%5000*4;
         mipsInterpreter.getCore()->setPc(PC);
+        //Generate instructions
         int addInst = genInstAdd(rand()%32,rand()%32,rand()%31+1);
         int addiInst = genInstAddi(rand()%32,rand()%31+1,rand()%1000);
         int swInst = genInstSw(0, rand()%32, 100);
-        //int swInst = genInstSw(
+        //Load instructions
         memorySystem.setWord(PC+0, addInst); //Add R3 <- R1, R2
         memorySystem.setWord(PC+4, addiInst); //Add R3 <- R1, R2
         memorySystem.setWord(PC+8, swInst); //Add R3 <- R1, R2
+        //Run instructions
         mipsInterpreter.fetchAndInterpret(3);
-        //mipsInterpreter.fetchAndInterpret(1);
     }
-    mipsInterpreter.printRegisters();
-    mipsInterpreter.printStats();
+    //mipsInterpreter.printRegisters();
+    //mipsInterpreter.printStats();
     
     testTimer_print();
     
 }
 
-void testArithmeticPerformance(){
-    cout << "================== Testing Arithmetic Function Performance ===================" << endl;
-    MemorySystem memorySystem;
-    MipsInterpreter mipsInterpreter(&memorySystem);
-    addInstructionsToInterpreter(mipsInterpreter);
-    mipsInterpreter.getCore()->setRegSig(1, -8);
-    mipsInterpreter.getCore()->setRegSig(2, 3);
-    memorySystem.setWord(0x0, 0x00221820);
-    mipsInterpreter.fetchAndInterpret(1);
-    cout << "R3 is ";
-    cout << mipsInterpreter.getCore()->getRegSig(3) << endl;
-    mipsInterpreter.getCore()->setRegUns(1, 0x1001);
-    mipsInterpreter.getCore()->setRegUns(2, 0x0342);
-    memorySystem.setWord(0x4, 0x00221820);
-    mipsInterpreter.fetchAndInterpret(1);
-    cout << "R3 is ";
-    cout << hex << mipsInterpreter.getCore()->getRegUns(3) << endl;
-    mipsInterpreter.printStats();
-    
-    mipsInterpreter.getCore()->setRegSig(4, -140);
-    mipsInterpreter.getCore()->setRegSig(5, 40);
-    memorySystem.setWord(0x8, genInstAdd(4,5,6));
-    mipsInterpreter.fetchAndInterpret(1);
-    cout << dec << "R6 is " << mipsInterpreter.getCore()->getRegSig(6) << endl;
-    mipsInterpreter.printStats();
-    
-    
-}
-
+//Runs 100 million random reads and writes and reports time elapsed for each
 void testMemoryPerformance(){
     cout << "================== Testing Memory System Performance ===================" << endl;
     MemorySystem memorySystem;
-    //MipsInterpreter mipsInterpreter(&memorySystem);
-    //addInstructionsToInterpreter(mipsInterpreter);
     
-    memorySystem.setWord(3400, 4667);
-    memorySystem.setWord(50000, 12345);
-    memorySystem.setWord(0, 3);
-    cout << memorySystem.retrieveWord(3400) << endl;
-    
-    memorySystem.printSummary();
     memorySystem.setVerbose(false);
     
     srand(time(0));
     testTimer_start("100 000 000 random writes");
     for(int i=0; i < 100000000; i++){
-        memorySystem.setWord((rand()%16384) * 4, rand());
+        memorySystem.setWord((rand()%1073741824) * 4, rand());
     }
     testTimer_print();
     
@@ -128,11 +141,7 @@ void testMemoryPerformance(){
     
     testTimer_start("100 000 000 random reads");
     for(int i=0; i < 100000000; i++){
-        memorySystem.retrieveWord((rand()%16384) * 4);
+        memorySystem.retrieveWord((rand()%1073741824) * 4);
     }
     testTimer_print();
-    //mipsInterpreter.printStats();
-    //mipsInterpreter.printRegisters();
-    
-    
 }

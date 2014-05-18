@@ -1,62 +1,14 @@
 //
 //  patternMatchers.cpp
 //  mipsim
-//
-//  Created by Jacob Simionato on 31/03/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
 
 #include "patternMatchers.h"
 
 using namespace std;
 
-
-bool isInChars(char inputChar, string checkList){
-    char curCheckChar;
-    int curCheckPos = 0;
-    do{
-        curCheckChar = checkList[curCheckPos];
-        //cout << "checking " << inputChar << " vs " << curCheckChar;
-        if(inputChar == curCheckChar){
-            //cout << inputChar << " true!" << endl;
-            return true;
-        }else{
-        }
-        curCheckPos++;
-    }while(curCheckPos < checkList.length());
-    //cout << inputChar << " false!" << endl;
-    return false;
-}
-
-
-void removeComment(string &input, char separator){
-    int index = 0;
-    char curChar = 0;
-    do{
-        curChar = input[index];
-        index++;
-    }while(curChar != separator && index < input.length());
-    
-    if(curChar == separator){
-        input.resize(index-1);
-    }
-}
-
-void padEquals(std::string &input){
-    string output;
-    for(int i=0; i<input.length(); i++){
-        char curChar = input[i];
-        if(curChar == '='){
-            output.push_back(' ');
-            output.push_back('=');
-            output.push_back(' ');
-        }else{
-            output.push_back(curChar);
-        }
-    }
-    input = output;
-}
-
+//Takes a string and tokenizes it using the provided delimiters, returning a vector of strings representing each token
 vector<string> explode(std::string input, string separators){
     vector<string> output;
     int start = -1;
@@ -73,7 +25,7 @@ vector<string> explode(std::string input, string separators){
         if(start >= input.length()){
             break;
         }
-    
+        
         //Look for ending position
         char endChar = 0;
         end = start;
@@ -96,57 +48,78 @@ vector<string> explode(std::string input, string separators){
     return output;
 }
 
-void printStrVector(const std::vector<std::string> input){
-    for(int i = 0; i<input.size(); i++){
-        cout << i << ": " << input[i];
-        cout << " - length = " << input[i].length() << " chars" << endl;
+//Returns true if the input character matches any characters in the string. Used by explode to check for delimiters.
+bool isInChars(char inputChar, string checkList){
+    char curCheckChar;
+    int curCheckPos = 0;
+    //Iterate through string and check for inputChar
+    do{
+        curCheckChar = checkList[curCheckPos];
+        if(inputChar == curCheckChar){
+            //Return true immediately if there is a match
+            return true;
+        }
+        curCheckPos++;
+    }while(curCheckPos < checkList.length());
+    return false;
+}
+
+//Takes an input string and checks if there is a comment at the end of the line indicated by the provided separator character. If a comment is found, the string is truncated to remove it.
+void removeComment(string &input, char separator){
+    int index = 0;
+    char curChar = 0;
+    //Search through string for the first ocurrence of the separator character
+    do{
+        curChar = input[index];
+        index++;
+    }while(curChar != separator && index < input.length());
+    //If a separator was found, then truncate string
+    if(curChar == separator){
+        input.resize(index-1);
     }
 }
 
-void printStrInts(const std::string input){
-    cout << "String as numbers: ";
+//Takes an input string and returns a new string where each equals sign in the string has a space character inserted immediately before and after it. eg "num=5" becomes "num = 5"
+void padEquals(std::string &input){
+    string output;
     for(int i=0; i<input.length(); i++){
-        int charInt = input[i];
-        cout << dec << charInt << " ";
+        char curChar = input[i];
+        if(curChar == '='){
+            output.push_back(' ');
+            output.push_back('=');
+            output.push_back(' ');
+        }else{
+            output.push_back(curChar);
+        }
     }
-    cout << endl;
+    input = output;
 }
 
-//int decStrToInt(string input){
-//    int x;
-//    stringstream ss;
-//    ss << input;
-//    ss >> x;
-//    return x;
-//}
-//
-//int hexStrToInt(string input){
-//    int x;
-//    stringstream ss;
-//    ss << std::hex << input;
-//    ss >> x;
-//    return x;
-//}
 
 /*
  Helper functions for decStrToInt and hexStrToInt
  */
+//Returns true if input is a numeral
 bool isNum(char input){
     return input >= '0' && input <= '9';
 }
 
+//Returns true if input is an uppercase letter hex digit
 bool isUpperHex(char input){
     return input >= 'A' && input <= 'F';
 }
 
+//Returns true if input is a lower case letter hex digit
 bool isLowerHex(char input){
     return input >= 'a' && input <= 'f';
 }
 
+//Returns true if input is a valid hex digit
 bool isHex(char input){
     return isNum(input) || isUpperHex(input) || isLowerHex(input);
 }
 
+//Extracts numerical value of a single hex digit
 int hexDigVal(char input){
     if(isNum(input)){
         return input - '0';
@@ -158,7 +131,8 @@ int hexDigVal(char input){
     return -1;
 }
 
-
+//Attempts to convert a string containing hex digits to an integer
+//If any of the digits are not valid hex, then we return false and do not set output
 bool hexStrToInt(const std::string &input, unsigned int &output){
     unsigned int accum = 0;
     int pos = 0;
@@ -176,6 +150,8 @@ bool hexStrToInt(const std::string &input, unsigned int &output){
     return true;
 }
 
+//Attempts to convert a string containing decimal digits to an integer
+//If any of the digits are not valid numerals, then we return false and do not set output
 bool decStrToInt(const std::string &input, unsigned int &output){
     unsigned int accum = 0;
     int pos = 0;
@@ -194,122 +170,22 @@ bool decStrToInt(const std::string &input, unsigned int &output){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-bool parseRegExp(string inputLine, string instrPatternString, vector<string> &result){
-    regex instrPattern(instrPatternString);
-    smatch instrMatch;
-    //cout << "attempting to match for '" << inputLine << endl;
-    
-    bool searchSuccess = regex_search(inputLine, instrMatch, instrPattern);
-    if(searchSuccess){
-        for (size_t i = 0; i < instrMatch.size(); i++) {
-            string resultStr = instrMatch[i].str();
-            if(resultStr.length() == 0){
-                return 0;
-            }
-            result.push_back(resultStr);
-            //cout << i << ": " << instrMatch[i].str() << endl;
-        }
-    }else{
-        return 0;
-    }
-    return 1;
-}
-
-
-
-
-
-
-bool saveCharImmediate(std::string &input, int &pos, std::vector<int> &output){
-    output.push_back(input[pos]);
-    pos++;
-    //Avoid pos overrun and return false if we are at end of line
-    if(pos >= input.length()){
-        return false;
-    }
-    return true;
-}
-//to find inital character
-
-//Returns true if next immedaite char is given char. Advances if it is, doesn't advance if not
-bool checkCharImmediate(std::string &input, int &pos, char checkChar){
-    if(input[pos] == checkChar){
-        pos++;
-        return true;
-    }
-    return false;
-}
-
-
-//Returns 1 if equals found, 0 if not
-bool checkAdvanceEquals(std::string &input, int &pos){
-    advancePastWhiteSpace(input, pos);
-    bool output = checkCharImmediate(input, pos, '=');
-    if(output == true){
-        advancePastWhiteSpace(input, pos);
-    }
-    return output;
-}
-
-bool advancePastWhiteSpace(std::string &input, int pos){
-    while(pos < input.length()){
-        if(pos >= input.length() - 1){
-            return false;
-        }
-        char curChar = input[pos];
-        //If it is not whitespace
-        if(curChar > 15 && curChar!=32){
-            return true;
-        }
-        pos++;
-    }
-    if(pos >= input.length() - 1){
-        pos = input.length() - 1;
-    }
-    return false;
-}//returns false if we reach end of line
-
 /*
-std::vector<int> parseInput(std::string input){
-    vector<int> output;
-    vector<int> blank;
-    int pos = 0;
-    if(!advancePastWhiteSpace(input, pos)){
-        return blank;
+ =================== Pattern Matching Debug Helpers ===================
+ */
+
+void printStrVector(const std::vector<std::string> input){
+    for(int i = 0; i<input.size(); i++){
+        cout << i << ": " << input[i];
+        cout << " - length = " << input[i].length() << " chars" << endl;
     }
-    if(!saveCharImmediate(input, pos, output)){
-        return output;
-    }
-    switch(output[0]){
-        case 'r':
-            saveDecImmediate(input, pos, output);
-            break;
-        case 'p':
-            if(!checkCharImmediate(input, pos, 'c')){
-                return blank;
-            }
-        case 'm':
-            if(!advancePastWhiteSpace(input, pos)){
-                return blank;
-            };
-            saveHexImmediate(input, pos, output);
-            break;
-        case '.':
-            if(!advancePastWhiteSpace(input, pos)){
-                return output;
-            }
-            saveCharImmediate(input, pos, output);
-    }
-    return output;
 }
-*/
+
+void printStrInts(const std::string input){
+    cout << "String as numbers: ";
+    for(int i=0; i<input.length(); i++){
+        int charInt = input[i];
+        cout << dec << charInt << " ";
+    }
+    cout << endl;
+}

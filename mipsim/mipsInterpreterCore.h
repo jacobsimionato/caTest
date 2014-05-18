@@ -1,10 +1,8 @@
 //
 //  mipsInterpreterCore.h
 //  mipsim
-//
-//  Created by Jacob Simionato on 30/03/2014.
-//  Copyright (c) 2014 Jacob. All rights reserved.
-//
+//  Computer Architecture Assignment 1 2014
+//  Jacob Simionato a1175808
 
 #ifndef __mipsim__mipsInterpreterCore__
 #define __mipsim__mipsInterpreterCore__
@@ -16,6 +14,11 @@
 
 #define NUM_GP_REGS 32 //Number of general purpose registers
 
+
+/*
+ ====================== MipsInterpreterCore ======================
+ A class which represents the state of a MIPS processor including its registers and a pointer to a memory system. A MIPS instruction need only interact with the Mips interpreter core during execution.
+ */
 class MipsInterpreterCore{
 public:
     //Initializes register values to zero and sets memory system pointer to null
@@ -23,21 +26,30 @@ public:
     
     //Initializes register values to zero;
     void resetRegs();
+    
+    //Prints values of registers
+    void print();
+    
+    //Get and set methods for registers
     wordT getRegUns(int regNum);
     void setRegUns(int regNum, wordT val);
     wordST getRegSig(int regNum);
     void setRegSig(int regNum, wordST val);
     wordT getPc();
     void setPc(wordT val);
+    
     //Increment PC forwards by this unsigned value
     void incPc(wordT val);
-    //Relative jump
-    void relJumpPc(long val);
-    wordT fetchInstruction();
-    MemorySystemGeneric* getMemorySystem();
     
-    //Prints values of registers
-    void print();
+    //Relative jump by a distance in byte address represented as a signed long
+    void relJumpPc(long val);
+    
+    //Fetch the instruction from memory at the current PC address
+    wordT fetchInstruction();
+    
+    //Return a pointer to the bound memory system
+    MemorySystemGeneric* getMemorySystem();
+
 private:
     
     wordT m_regPc;
