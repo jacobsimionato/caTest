@@ -14,7 +14,7 @@ using namespace std;
  ======== Constructor ========
  Requires values with which to initialize the attributes of the InstructionDef, including a pointer to a function which executes the instruction
  */
-MipsInstructionDef::MipsInstructionDef(const char* name_input, char opcode_input, char modifier_input, int (*execute_input)(MipsInterpreterCore* core, int instructionBin) ){
+MipsInstructionDef::MipsInstructionDef(const char* name_input, char opcode_input, char modifier_input, void (*execute_input)(MipsInterpreterCore* core, int instructionBin) ){
     strncpy(name, name_input, MAX_NAME_LENGTH);
     opcode = opcode_input;
     modifier = modifier_input;

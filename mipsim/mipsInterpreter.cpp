@@ -18,8 +18,6 @@ using namespace std;
  Construct mips interpreter which must be bound to an existing memorySystem
  */
 MipsInterpreter::MipsInterpreter(MemorySystemGeneric* memorySystemInst, MemorySystemGeneric* memorySystemData): m_interpreterCore(memorySystemInst, memorySystemData){
-    m_instrCount = 0;
-    m_cycleCount = 0;
     
     m_verbose = false;
 }
@@ -66,15 +64,14 @@ int MipsInterpreter::interpret(wordT instructionBin){
     }
     
     //Execute instruction
-    int cyclesElapsed = instructionDef->execute(&m_interpreterCore, instructionBin);
+    instructionDef->execute(&m_interpreterCore, instructionBin);
+    
     //Update statistics for this particular instruction type
     instructionDef->numTimesExecuted++;
     
+    //Update PC and instrCount
     m_interpreterCore.incPc(4);
-    
-    //Maintain overall statistics
-    m_cycleCount += cyclesElapsed;
-    m_instrCount++;
+    m_interpreterCore.incInstrCount(1);
     
     if(m_verbose){
         cout << "MipsInterpreter: Executing " << instructionDef->name << endl;
@@ -128,11 +125,13 @@ void MipsInterpreter::printStats(){
     }
     
     //Print the other statistics
-    cout << "Instruction count: " << m_instrCount << endl;
-    cout << "Cycle count: " << m_cycleCount << endl;
+    int instrCount = m_interpreterCore.getInstrCount();
+    int cycleCount = m_interpreterCore.getCycleCount();
+    cout << "Instruction count: " << instrCount << endl;
+    cout << "Cycle count: " << cycleCount << endl;
     //Print CPI if instructions have been executed
-    if(m_instrCount != 0){
-        double avCpi = static_cast<double>(m_cycleCount) / static_cast<double>(m_instrCount);
+    if(instrCount != 0){
+        double avCpi = static_cast<double>(cycleCount) / static_cast<double>(instrCount);
         cout << "Average CPI: " << std::fixed << std::setprecision(4) << avCpi << endl;
     }
 }
@@ -145,22 +144,22 @@ MipsInterpreterCore* MipsInterpreter::getCore(){
     return &m_interpreterCore;
 }
 
-/*
- ======== Count accessors / mutators ========
- Access and modify cycle accounting system
- */
-int MipsInterpreter::getCycleCount(){
-    return m_cycleCount;
-}
-
-int MipsInterpreter::getInstrCount(){
-    return m_instrCount;
-}
-
-void MipsInterpreter::resetCounts(){
-    m_cycleCount = 0;
-    m_instrCount = 0;
-}
+///*
+// ======== Count accessors / mutators ========
+// Access and modify cycle accounting system
+// */
+//int MipsInterpreter::getCycleCount(){
+//    return m_cycleCount;
+//}
+//
+//int MipsInterpreter::getInstrCount(){
+//    return m_instrCount;
+//}
+//
+//void MipsInterpreter::resetCounts(){
+//    m_cycleCount = 0;
+//    m_instrCount = 0;
+//}
 
 /*
  ======== void setVerbose(bool val) ========

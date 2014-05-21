@@ -110,9 +110,16 @@ void testExecutionSpeedPerformance(){
         int addiInst = genInstAddi(rand()%32,rand()%31+1,rand()%1000);
         int swInst = genInstSw(0, rand()%32, 100);
         //Load instructions
-        memorySystem.setWord(PC+0, addInst); //Add R3 <- R1, R2
-        memorySystem.setWord(PC+4, addiInst); //Add R3 <- R1, R2
-        memorySystem.setWord(PC+8, swInst); //Add R3 <- R1, R2
+        
+        WordTransfer wordSet1(PC+0, addInst);
+        memorySystem.setWord(wordSet1);
+        
+        WordTransfer wordSet2(PC+4, addiInst);
+        memorySystem.setWord(wordSet2);
+        
+        WordTransfer wordSet3(PC+8, swInst);
+        memorySystem.setWord(wordSet3);
+        
         //Run instructions
         mipsInterpreter.fetchAndInterpret(3);
     }
@@ -133,7 +140,8 @@ void testMemoryPerformance(){
     srand(time(0));
     testTimer_start("100 000 000 random writes");
     for(int i=0; i < 100000000; i++){
-        memorySystem.setWord((rand()%1073741824) * 4, rand());
+        WordTransfer wordSet1((rand()%1073741824) * 4, rand());
+        memorySystem.setWord(wordSet1);
     }
     testTimer_print();
     
@@ -141,7 +149,8 @@ void testMemoryPerformance(){
     
     testTimer_start("100 000 000 random reads");
     for(int i=0; i < 100000000; i++){
-        memorySystem.retrieveWord((rand()%1073741824) * 4);
+        WordTransfer wordRetr1((rand()%1073741824) * 4);
+        memorySystem.retrieveWord(wordRetr1);
     }
     testTimer_print();
 }

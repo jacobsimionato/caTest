@@ -22,20 +22,21 @@
 class MemorySystem: public MemorySystemGeneric{
 public:
     //Exposed data I/O interface
-    void setWord(wordT address, wordT data);
-    wordT retrieveWord(wordT address);
+    virtual void setWord(WordTransfer &wordTrans);
+    virtual void retrieveWord(WordTransfer &wordTrans);
     
-    MemorySystem();
+    //Return number of address access cycles for this memory to assist with accounting
+    virtual int getAddressAccessCycles();
+    
+    MemorySystem(int accessTime = 5, int transferTime = 3);
     ~MemorySystem();
-    
-    //Sets verbose mode
-    void setVerbose(bool m_verbose_set = true);
     
     //Prints a list of allocated blocks for debugging
     void printSummary();
 private:
-    //Enables error messages for debugging
-    bool m_verbose;
+    int m_accessTime;
+    int m_transferTime;
+
     
     //Table of pointers to blocks - NULL pointer indicates block has not been allocated yet
     wordT** m_blockTable;

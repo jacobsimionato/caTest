@@ -42,6 +42,7 @@
 #include "mipSimPerformance.h"          //Performance testing functions
 #include "mipsimTests.h"                //Unit testing suite
 #include "cmdLineOption.h"
+#include "cacheFlex.h"
 
 using namespace std;
 
@@ -54,7 +55,7 @@ int main(int argc, const char * argv[]){
     if(argc > 1){
 
         cmdLineOption::parseCmdLineOptions(argc, argv);
-        cmdLineOption::printAll();
+        //cmdLineOption::printAll();
 
         cmdLineOption *o_v, *o_t, *o_p;
         if((o_v = cmdLineOption::findOpt("-v"))){
@@ -81,13 +82,127 @@ int main(int argc, const char * argv[]){
         
     }
     
+    cmdLineOption *Is = cmdLineOption::findOpt("-Is");
+    cmdLineOption *Ib = cmdLineOption::findOpt("-Ib");
+    cmdLineOption *Ia = cmdLineOption::findOpt("-Ia");
+    cmdLineOption *Ds = cmdLineOption::findOpt("-Ds");
+    cmdLineOption *Db = cmdLineOption::findOpt("-Db");
+    cmdLineOption *Da = cmdLineOption::findOpt("-Da");
+    cmdLineOption *Dwt = cmdLineOption::findOpt("-Dwt");
+    cmdLineOption *Dwb = cmdLineOption::findOpt("-Dwb");
+    cmdLineOption *Ma = cmdLineOption::findOpt("-Ma");
+    cmdLineOption *Mw = cmdLineOption::findOpt("-Mw");
+    
+    int IsVal, IbVal, IaVal, DsVal, DbVal, DaVal, MaVal, MwVal;
+    
+    WriteStrat instWriteStrat = WRITE_THROUGH_AROUND;
+    WriteStrat dataWriteStrat;
+    
+    MemorySystem *memorySystem;
+    CacheFlex *instCache, *dataCache;
+    MemorySystemGeneric *instCacheGeneric, *dataCacheGeneric;
+    
+    /*
+     =============== Memory System Configuration ===============
+     */
+    if(!Ma || !Mw){
+        cout << "Error: Must include -Ma and -Mw options" << endl;
+        exit(1);
+    }
+    
+    MaVal = Ma->getArgPosInt(0);
+    MwVal = Mw->getArgPosInt(0);
+    
+    
+    if(MaVal == -1 || MwVal == -1){
+        cout << "Error: -Ma and -Mw must be positive integers" << endl;
+        exit(1);
+    }
+    
+    memorySystem = new MemorySystem(MaVal, MwVal);
+    
+
+    
+    /*
+     =============== Instruction Cache Configuration ===============
+     */
+    
+    if(Is && Ib && Ia){
+        //If there IS an instruction case
+        IsVal = Is->getArgPwr2(0);
+        IbVal = Ib->getArgPwr2(0);
+        if(Ia->getArgStr(0) == "full"){
+            IaVal = IsVal * 1024 / IbVal; //Calculate full associativity = number of blocks in total
+        }else{
+            IaVal = Ia->getArgPwr2(0);
+        }
+        
+        if(IsVal == -1 || IbVal == -1 || IaVal == -1){
+            cout << "Error: -Is, -Ib, -Ia must be powers of two" << endl;
+        }
+        
+        instCache = new CacheFlex(memorySystem, IsVal, IbVal, IaVal, instWriteStrat);
+        instCacheGeneric = instCache;
+        
+    }else if(Is || Ib || Ia){
+        cout << "Error: must include all of Is, Ib, Ia or none of them" << endl;
+        exit(1);
+    }else{
+        //If there is NO instruction case
+        instCache = NULL;
+        instCacheGeneric = memorySystem;
+    }
+    
+    /*
+     =============== Data Cache Configuration ===============
+     */
+    
+    if(Ds && Db && Da){
+        //If there IS a data cache
+        DsVal = Ds->getArgPwr2(0);
+        DbVal = Db->getArgPwr2(0);
+        if(Da->getArgStr(0) == "full"){
+            DaVal = DsVal * 1024 / DbVal; //Calculate full associativity = number of blocks in total
+        }else{
+            DaVal = Da->getArgPwr2(0);
+        }
+        
+        if(DsVal == -1 || DbVal == -1 || DaVal == -1){
+            cout << "Error: -Ds, -Db, -Da must be powers of two" << endl;
+        }
+        
+        if((!Dwt && !Dwb) || (Dwt && Dwb)){
+            cout << "Error: must include exactly one of -Dwt or -Dwb" << endl;
+            exit(1);
+        }
+        
+        if(Dwt){
+            dataWriteStrat = WRITE_THROUGH_AROUND;
+        }else{
+            dataWriteStrat = WRITE_BACK_ALLOCATE;
+        }
+        
+        
+        dataCache = new CacheFlex(memorySystem, DsVal, DbVal, DaVal, dataWriteStrat);
+        dataCacheGeneric = dataCache;
+        
+    }else if(Ds || Db || Da){
+        cout << "Error: must include all of Ds, Db, Da or none of them" << endl;
+        exit(1);
+    }else{
+        //If there is NO data case
+        dataCache = NULL;
+        dataCacheGeneric = memorySystem;
+    }
+    
+    
     //Setup main environment
-    MemorySystem memorySystem;
-    MipsInterpreter mipsInterpreter(&memorySystem, &memorySystem);
+    
+    MipsInterpreter mipsInterpreter(instCacheGeneric, dataCacheGeneric);
     addInstructionsToInterpreter(mipsInterpreter);
     
     if(g_verbose){
-        memorySystem.setVerbose(true);
+        memorySystem->setVerbose(true);
         mipsInterpreter.setVerbose(true);
     }
     
@@ -129,7 +244,9 @@ int main(int argc, const char * argv[]){
             }else if(cmdVec[0] == "m" && cmdVec.size() == 2){
                 unsigned int memAddress;
                 if(hexStrToInt(cmdVec[1], memAddress)){
-                    cout << hex << setw(8) << setfill('0') << memorySystem.retrieveWord(memAddress) << endl;
+                    WordTransfer wordRetr(memAddress);
+                    memorySystem->retrieveWord(wordRetr);
+                    cout << hex << setw(8) << setfill('0') << wordRetr.data << endl;
                     executeSuccess = true;
                 }
             //"m address = value"
@@ -137,7 +254,8 @@ int main(int argc, const char * argv[]){
                 unsigned int memAddress;
                 unsigned int memValue;
                 if(hexStrToInt(cmdVec[1], memAddress) && hexStrToInt(cmdVec[3], memValue) && cmdVec[2] == "="){
-                    memorySystem.setWord(memAddress, memValue);
+                    WordTransfer wordSet(memAddress, memValue);
+                    memorySystem->setWord(wordSet);
                     executeSuccess = true;
                 }
             //"pc"

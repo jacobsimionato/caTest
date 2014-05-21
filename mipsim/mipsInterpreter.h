@@ -65,8 +65,8 @@ private:
     bool m_verbose;
     
     //Counts to maintain global statistics
-    int m_cycleCount;
-    int m_instrCount;
+    //int m_cycleCount;
+    //int m_instrCount;
     
     //Generates an integer search key from a binary instruction containing the opcode and modifier
     int genKeyFromInstruction(wordT instructionBin);

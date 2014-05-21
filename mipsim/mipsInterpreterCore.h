@@ -53,8 +53,23 @@ public:
     //Word IO from Memory system
     void setWordData(wordT address, wordT data);
     wordT retrieveWordData(wordT address);
-
+    
+    //Access statistics
+    int getCycleCount(); //Includes misses
+    int getInstrCount();
+    int getMissCycleCount();
+    
+    //Update statistics
+    void incIdealCycleCount(int numCycles);
+    void incInstrCount(int numInstrs);
+    void incMissCycleCount(int numCycles);
+    
+    void resetCounts();
 private:
+    //Counts to maintain global statistics
+    int m_idealCycleCount;
+    int m_instrCount;
+    int m_missCycleCount;
     
     wordT m_regPc;
     wordT m_regGp[NUM_GP_REGS];

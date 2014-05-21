@@ -204,7 +204,7 @@ void runPatternMatchersTests(){
 
 //Run mipsInterpreter tests
 void runMipsInterpreterTests(){
-    MemorySystem memorySystem;
+    MemorySystem memorySystem(0,0); //Memory system with no penalties
     MipsInterpreter mipsInterpreter(&memorySystem, &memorySystem);
     addInstructionsToInterpreter(mipsInterpreter);
     
@@ -217,10 +217,12 @@ void runMipsInterpreterTests(){
     assert(mipsInterpreter.getCore()->getPc(), (unsigned int) 0, "check PC is initialized as zero");
     
     //Initialize memory with a couple of add instructions to test execution
-    memorySystem.setWord(0x80000, genInstAdd(1, 2, 3));
-    memorySystem.setWord(0x80004, genInstAdd(1, 2, 3));
+    WordTransfer wordTransfer1(0x80000, genInstAdd(1, 2, 3));
+    memorySystem.setWord(wordTransfer1);
+    WordTransfer wordTransfer2(0x80004, genInstAdd(1, 2, 3));
+    memorySystem.setWord(wordTransfer2);
     mipsInterpreter.getCore()->setPc(0x80000);
-    mipsInterpreter.resetCounts();
+    mipsInterpreter.getCore()->resetCounts();
     
     //Test execution of instructions
     //Run first instruction
@@ -228,25 +230,26 @@ void runMipsInterpreterTests(){
     assert(mipsInterpreter.getCore()->getRegUns(3), (unsigned int) 0, "check 0+0 = 0");
     assert(mipsInterpreter.getCore()->getPc(), (unsigned int) 0x80004, "check pc inc 4 after one instruction");
     assert(interpResult, 0, "check interpreter returns 0 under normal operation");
-    assert(mipsInterpreter.getInstrCount(), 1, "instruction count after add");
-    assert(mipsInterpreter.getCycleCount(), 4, "cycle count after add");
+    assert(mipsInterpreter.getCore()->getInstrCount(), 1, "instruction count after add");
+    assert(mipsInterpreter.getCore()->getCycleCount(), 4, "cycle count after add");
     //Run second instruction
     mipsInterpreter.getCore()->setRegUns(1, 4564);
     mipsInterpreter.getCore()->setRegUns(2, 1123434);
     interpResult = mipsInterpreter.fetchAndInterpret(1);
     
-    assert(mipsInterpreter.getInstrCount(), 2, "instruction count after two adds");
-    assert(mipsInterpreter.getCycleCount(), 8, "cycle count after two adds");
+    assert(mipsInterpreter.getCore()->getInstrCount(), 2, "instruction count after two adds");
+    assert(mipsInterpreter.getCore()->getCycleCount(), 8, "cycle count after two adds");
     
     assert(mipsInterpreter.getCore()->getRegUns(3), (unsigned int) 1127998, "check 0+0 = 1127998");
     assert(mipsInterpreter.getCore()->getPc(), (unsigned int) 0x80008, "check pc inc 8 after two instructions");
     assert(interpResult, 0, "check interpreter returns 0 under normal operation");
     
-    mipsInterpreter.resetCounts();
-    assert(mipsInterpreter.getInstrCount(), 0, "instruction count zeroed after reset");
-    assert(mipsInterpreter.getCycleCount(), 0, "cycle count zeroed after reset");
+    mipsInterpreter.getCore()->resetCounts();
+    assert(mipsInterpreter.getCore()->getInstrCount(), 0, "instruction count zeroed after reset");
+    assert(mipsInterpreter.getCore()->getCycleCount(), 0, "cycle count zeroed after reset");
     
-    memorySystem.setWord(0x0, 0xFFFFFFFF);
+    WordTransfer wordTransfer3(0x0, 0xFFFFFFFF);
+    memorySystem.setWord(wordTransfer3);
     mipsInterpreter.getCore()->setPc(0x0);
     interpResult = mipsInterpreter.fetchAndInterpret(1);
     assert(interpResult, 1, "check interpreter returns 1 for invalid instruction");
@@ -254,23 +257,62 @@ void runMipsInterpreterTests(){
 
 //Run memorySystem tests
 void runMemorySystemTests(){
-    MemorySystem memorySystem;
-    assert(memorySystem.retrieveWord(0x283828), (unsigned int) 0, "Check memory 0x283828 initialized to zero");
-    assert(memorySystem.retrieveWord(0xFFFFFFFF), (unsigned int) 0, "Check memory 0xFFFFFFFF initialized to zero");
-    memorySystem.setWord(0x0, 0x456);
-    memorySystem.setWord(0x4, 0x4);
-    memorySystem.setWord(0x8, 0x8);
-    memorySystem.setWord(0x283828, 0x283828);
-    memorySystem.setWord(0xFFFFFFFC, 0xFFFFFFFC);
-    memorySystem.setWord(0xFFFFFFF0, 0xFFFFFFF0);
-    assert(memorySystem.retrieveWord(0x0), (unsigned int) 0x456, "Check memory 0x0 set correctly");
-    assert(memorySystem.retrieveWord(0x4), (unsigned int) 0x4, "Check memory 0x4 set correctly");
-    assert(memorySystem.retrieveWord(0x8), (unsigned int) 0x8, "Check memory 0x8 set correctly");
-    assert(memorySystem.retrieveWord(0x283828), (unsigned int) 0x283828, "Check memory 0x283828 set correctly");
-    assert(memorySystem.retrieveWord(0xFFFFFFFC), (unsigned int) 0xFFFFFFFC, "Check memory 0xFFFFFFFC set correctly");
-    assert(memorySystem.retrieveWord(0xFFFFFFF0), (unsigned int) 0xFFFFFFF0, "Check memory 0xFFFFFFF0 set correctly");
-    assert(memorySystem.retrieveWord(0xFFFFFFF8), (unsigned int) 0x0, "Check memory 0xFFFFFFF8 has not been touched");
-    assert(memorySystem.retrieveWord(0xFFFFFFF4), (unsigned int) 0x0, "Check memory 0xFFFFFFF4 has not been touched");
+    MemorySystem memorySystem(0,0);
+    
+    WordTransfer wordRetr1(0x283828);
+    memorySystem.retrieveWord(wordRetr1);
+    assert(wordRetr1.data, (unsigned int) 0, "Check memory 0x283828 initialized to zero");
+    
+    WordTransfer wordRetr2(0xFFFFFFFF);
+    memorySystem.retrieveWord(wordRetr2);
+    assert(wordRetr2.data, (unsigned int) 0, "Check memory 0xFFFFFFFF initialized to zero");
+    
+    
+    WordTransfer wordSend1(0x0, 0x456);
+    memorySystem.setWord(wordSend1);
+    WordTransfer wordSend2(0x4, 0x4);
+    memorySystem.setWord(wordSend2);
+    WordTransfer wordSend3(0x8, 0x8);
+    memorySystem.setWord(wordSend3);
+    WordTransfer wordSend4(0x283828, 0x283828);
+    memorySystem.setWord(wordSend4);
+    WordTransfer wordSend5(0xFFFFFFFC, 0xFFFFFFFC);
+    memorySystem.setWord(wordSend5);
+    WordTransfer wordSend6(0xFFFFFFF0, 0xFFFFFFF0);
+    memorySystem.setWord(wordSend6);
+    
+    
+    WordTransfer wordRetr3(0x0);
+    memorySystem.retrieveWord(wordRetr3);
+    assert(wordRetr3.data, (unsigned int) 0x456, "Check memory 0x0 set correctly");
+    
+    WordTransfer wordRetr4(0x4);
+    memorySystem.retrieveWord(wordRetr4);
+    assert(wordRetr4.data, (unsigned int) 0x4, "Check memory 0x4 set correctly");
+    
+    WordTransfer wordRetr41(0x8);
+    memorySystem.retrieveWord(wordRetr41);
+    assert(wordRetr41.data, (unsigned int) 0x8, "Check memory 0x8 set correctly");
+    
+    WordTransfer wordRetr5(0x283828);
+    memorySystem.retrieveWord(wordRetr5);
+    assert(wordRetr5.data, (unsigned int) 0x283828, "Check memory 0x283828 set correctly");
+    
+    WordTransfer wordRetr6(0xFFFFFFFC);
+    memorySystem.retrieveWord(wordRetr6);
+    assert(wordRetr6.data, (unsigned int) 0xFFFFFFFC, "Check memory 0xFFFFFFFC set correctly");
+    
+    WordTransfer wordRetr7(0xFFFFFFF0);
+    memorySystem.retrieveWord(wordRetr7);
+    assert(wordRetr7.data, (unsigned int) 0xFFFFFFF0, "Check memory 0xFFFFFFF0 set correctly");
+    
+    WordTransfer wordRetr8(0xFFFFFFF8);
+    memorySystem.retrieveWord(wordRetr8);
+    assert(wordRetr8.data, (unsigned int) 0x0, "Check memory 0xFFFFFFF8 has not been touched");
+    
+    WordTransfer wordRetr9(0xFFFFFFF4);
+    memorySystem.retrieveWord(wordRetr9);
+    assert(wordRetr9.data, (unsigned int) 0x0, "Check memory 0xFFFFFFF4 has not been touched");
 }
 
 void runCmdLineOptionTests(){

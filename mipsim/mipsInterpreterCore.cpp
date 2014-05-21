@@ -110,7 +110,7 @@ void MipsInterpreterCore::relJumpPc(long val){
  Fetch the instruction from instruction memory system at the current PC address
  */
 wordT MipsInterpreterCore::fetchInstruction(){
-    return m_memorySystemInst->retrieveWord(m_regPc);
+    return retrieveWordData(m_regPc);
 }
 
 /*
@@ -118,7 +118,13 @@ wordT MipsInterpreterCore::fetchInstruction(){
  Set a word in the data memory system
  */
 void MipsInterpreterCore::setWordData(wordT address, wordT data){
-    m_memorySystemData->setWord(address, data);
+    WordTransfer wordTrans(address, data);
+    m_memorySystemInst->setWord(wordTrans);
+    
+    //DO NOT UPDATE MISS CYCLES AS WRITE QUEUE PREVENTS WRITE STALLS
+    //Increment the miss count by the number of cycles taken for the memory transfer
+    //m_missCycleCount += wordTrans.numCycles; //Transfer time
+    //m_missCycleCount += m_memorySystemInst->getAddressAccessCycles(); //Address access time
 }
 
 /*
@@ -127,6 +133,49 @@ void MipsInterpreterCore::setWordData(wordT address, wordT data){
  */
 
 wordT MipsInterpreterCore::retrieveWordData(wordT address){
-    return m_memorySystemData->retrieveWord(address);
+    WordTransfer wordTrans(address);
+    m_memorySystemInst->retrieveWord(wordTrans);
+    
+    //Increment the miss count by the number of cycles taken for the memory transfer
+    m_missCycleCount += wordTrans.numCycles; //Transfer time
+    m_missCycleCount += m_memorySystemInst->getAddressAccessCycles(); //Address access time
+    
+    return wordTrans.data;
+}
+
+
+
+/*
+ ======== Count accessors / mutators ========
+ Access and modify cycle accounting system
+ */
+int MipsInterpreterCore::getCycleCount(){
+    return m_idealCycleCount + m_missCycleCount; //getCycle count gives total cycles including misses
+}
+
+int MipsInterpreterCore::getInstrCount(){
+    return m_instrCount;
+}
+
+int MipsInterpreterCore::getMissCycleCount(){
+    return m_missCycleCount;
+}
+
+void MipsInterpreterCore::incIdealCycleCount(int numCycles){
+    m_idealCycleCount += numCycles;
+}
+
+void MipsInterpreterCore::incInstrCount(int numInstrs){
+    m_instrCount += numInstrs;
+}
+
+void MipsInterpreterCore::incMissCycleCount(int numCycles){
+    m_missCycleCount += numCycles;
+}
+
+void MipsInterpreterCore::resetCounts(){
+    m_idealCycleCount = 0;
+    m_instrCount = 0;
+    m_missCycleCount = 0;
 }
 

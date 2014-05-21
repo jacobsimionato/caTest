@@ -18,6 +18,9 @@
 		1666FAE118E7DA9800CC03F8 /* mipsInstructionFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FADF18E7DA9800CC03F8 /* mipsInstructionFunctions.cpp */; };
 		1666FAE418E7E05000CC03F8 /* mipsInterpreterCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE218E7E05000CC03F8 /* mipsInterpreterCore.cpp */; };
 		1666FAE718E7E10200CC03F8 /* memorySystemGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */; };
+		1676F842192B79E700B3B72C /* wordTransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1676F840192B79E700B3B72C /* wordTransfer.cpp */; };
+		1676F848192B90E800B3B72C /* cacheFlex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1676F846192B90E800B3B72C /* cacheFlex.cpp */; };
+		1676F84B192B94A700B3B72C /* cacheBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1676F849192B94A600B3B72C /* cacheBlock.cpp */; };
 		167E452818E9127B00A00AA3 /* patternMatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 167E452618E9127B00A00AA3 /* patternMatchers.cpp */; };
 		16B681C31928B4DD0040DBF2 /* cacheGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16B681C11928B4DD0040DBF2 /* cacheGeneric.cpp */; };
 /* End PBXBuildFile section */
@@ -58,6 +61,12 @@
 		1666FAE318E7E05000CC03F8 /* mipsInterpreterCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mipsInterpreterCore.h; sourceTree = "<group>"; };
 		1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memorySystemGeneric.cpp; sourceTree = "<group>"; };
 		1666FAE618E7E10200CC03F8 /* memorySystemGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memorySystemGeneric.h; sourceTree = "<group>"; };
+		1676F840192B79E700B3B72C /* wordTransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wordTransfer.cpp; sourceTree = "<group>"; };
+		1676F841192B79E700B3B72C /* wordTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wordTransfer.h; sourceTree = "<group>"; };
+		1676F846192B90E800B3B72C /* cacheFlex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cacheFlex.cpp; sourceTree = "<group>"; };
+		1676F847192B90E800B3B72C /* cacheFlex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cacheFlex.h; sourceTree = "<group>"; };
+		1676F849192B94A600B3B72C /* cacheBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cacheBlock.cpp; sourceTree = "<group>"; };
+		1676F84A192B94A700B3B72C /* cacheBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cacheBlock.h; sourceTree = "<group>"; };
 		167E452618E9127B00A00AA3 /* patternMatchers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = patternMatchers.cpp; sourceTree = "<group>"; };
 		167E452718E9127B00A00AA3 /* patternMatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patternMatchers.h; sourceTree = "<group>"; };
 		16B681C11928B4DD0040DBF2 /* cacheGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cacheGeneric.cpp; sourceTree = "<group>"; };
@@ -103,12 +112,18 @@
 				160D757618F3945C0074FC0C /* mipSimPerformance.h */,
 				167E452618E9127B00A00AA3 /* patternMatchers.cpp */,
 				167E452718E9127B00A00AA3 /* patternMatchers.h */,
+				1676F840192B79E700B3B72C /* wordTransfer.cpp */,
+				1676F841192B79E700B3B72C /* wordTransfer.h */,
 				1666FAE518E7E10200CC03F8 /* memorySystemGeneric.cpp */,
 				1666FAE618E7E10200CC03F8 /* memorySystemGeneric.h */,
-				16B681C11928B4DD0040DBF2 /* cacheGeneric.cpp */,
-				16B681C21928B4DD0040DBF2 /* cacheGeneric.h */,
 				1666FAD218E7AFAE00CC03F8 /* memorySystem.cpp */,
 				1666FAD318E7AFAE00CC03F8 /* memorySystem.h */,
+				16B681C11928B4DD0040DBF2 /* cacheGeneric.cpp */,
+				16B681C21928B4DD0040DBF2 /* cacheGeneric.h */,
+				1676F846192B90E800B3B72C /* cacheFlex.cpp */,
+				1676F847192B90E800B3B72C /* cacheFlex.h */,
+				1676F849192B94A600B3B72C /* cacheBlock.cpp */,
+				1676F84A192B94A700B3B72C /* cacheBlock.h */,
 				1666FAD518E7AFF600CC03F8 /* mipsInterpreter.cpp */,
 				1666FAD618E7AFF600CC03F8 /* mipsInterpreter.h */,
 				1666FAE218E7E05000CC03F8 /* mipsInterpreterCore.cpp */,
@@ -175,12 +190,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				160D757718F3945C0074FC0C /* mipSimPerformance.cpp in Sources */,
+				1676F848192B90E800B3B72C /* cacheFlex.cpp in Sources */,
 				1666FAE718E7E10200CC03F8 /* memorySystemGeneric.cpp in Sources */,
 				16B681C31928B4DD0040DBF2 /* cacheGeneric.cpp in Sources */,
 				167E452818E9127B00A00AA3 /* patternMatchers.cpp in Sources */,
 				164917001924F8BD00214D83 /* cmdLineOption.cpp in Sources */,
 				1666FAE418E7E05000CC03F8 /* mipsInterpreterCore.cpp in Sources */,
+				1676F84B192B94A700B3B72C /* cacheBlock.cpp in Sources */,
 				1666FACA18E7AF9500CC03F8 /* main.cpp in Sources */,
+				1676F842192B79E700B3B72C /* wordTransfer.cpp in Sources */,
 				1666FADE18E7D3D300CC03F8 /* mipsInstructionDef.cpp in Sources */,
 				160D757418F392860074FC0C /* mipsimTests.cpp in Sources */,
 				1666FAD718E7AFF600CC03F8 /* mipsInterpreter.cpp in Sources */,

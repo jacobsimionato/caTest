@@ -14,7 +14,11 @@ using namespace std;
  2. sets word at given address to given data
  
  */
-void MemorySystem::setWord(wordT address, wordT data){
+void MemorySystem::setWord(WordTransfer &wordTrans){
+    wordTrans.numCycles = m_transferTime; //Add transfer time to transfer
+    
+    wordT address = wordTrans.address;
+    
     int blockNum = address / BLOCKSIZE;
     
     //Abort if blockNum not in range - should not happen if BLOCKSIZE and NUM_BLOCKS are consistent
@@ -31,10 +35,10 @@ void MemorySystem::setWord(wordT address, wordT data){
     }
     
     //Set relevant word of relevant block
-    (m_blockTable[blockNum])[(address % BLOCKSIZE)/4] = data;
+    (m_blockTable[blockNum])[(address % BLOCKSIZE)/4] = wordTrans.data;
     
     if(m_verbose){
-        cout << "MemorySystem: Word at address " << address << " in block " << blockNum << ", offset " << address % BLOCKSIZE << " set to " << data << endl;
+        cout << "MemorySystem: Word at address " << address << " in block " << blockNum << ", offset " << address % BLOCKSIZE << " set to " << wordTrans.data << endl;
     }
 }
 
@@ -43,7 +47,10 @@ void MemorySystem::setWord(wordT address, wordT data){
  retrieves word from memory address provided
  if block is not yet allocated, 0 is returned and the block remains unallocated, simulating a memory where each location is initialized to zero
  */
-wordT MemorySystem::retrieveWord(wordT address){
+void MemorySystem::retrieveWord(WordTransfer &wordTrans){
+    wordTrans.numCycles = m_transferTime; //Add transfer time to transfer
+    
+    wordT address = wordTrans.address;
     int blockNum = address / BLOCKSIZE;
     
     //Abort if blockNum not in range - should not happen if BLOCKSIZE and NUM_BLOCKS are consistent
@@ -51,7 +58,8 @@ wordT MemorySystem::retrieveWord(wordT address){
         if(m_verbose){
             cout << "MemorySystem::setWord ERROR - address out of range" << endl;
         }
-        return 0;
+        wordTrans.data = 0;
+        return;
     }
     
     //If the block is not allocated, then return 0 as memory should be initialized to zero. We could allocate block here, but it wouldn't make a functional difference
@@ -60,21 +68,32 @@ wordT MemorySystem::retrieveWord(wordT address){
         if(m_verbose){
             cout << "MemorySystem: WARNING - retrieved address " << address << " is in unallocated block" << endl;
         }
-        return 0;
+        wordTrans.data = 0;
+        return;
     //Else return the desired address
     }else{
         if(m_verbose){
             cout << "MemorySystem: Word at address " << address << " retrieved from block " << blockNum << endl;
         }
-        return (m_blockTable[blockNum])[(address % BLOCKSIZE)/4];
+        wordTrans.data = (m_blockTable[blockNum])[(address % BLOCKSIZE)/4];
+        return;
     }
+}
+
+
+/*
+ ======== int getAddressAccessCycles() ========
+ Returns number of cycles taken to access the memory added to the transfer time for the number of blocks transferred
+ */
+int MemorySystem::getAddressAccessCycles(){
+    return m_accessTime;
 }
 
 /*
  ======== MemorySystem() ========
  Constructor sets each pointer in m_blockTable to NULL to indicate they have not yet been allocated
  */
-MemorySystem::MemorySystem(){
+MemorySystem::MemorySystem(int accessTime, int transferTime){
     //Allocate blocktable - must be dynamic to avoid stack size limits
     m_blockTable = new wordT*[NUM_BLOCKS];
     
@@ -84,6 +103,9 @@ MemorySystem::MemorySystem(){
     }
     
     m_verbose = false;
+    
+    m_accessTime = accessTime;
+    m_transferTime = transferTime;
 }
 
 /*
@@ -96,15 +118,6 @@ MemorySystem::~MemorySystem(){
             delete(m_blockTable[i]);
         }
     }
-}
-
-
-/*
- ======== setVerbose(bool m_verbose_set) ========
- Sets verbose mode on or off
- */
-void MemorySystem::setVerbose(bool m_verbose_set){
-    m_verbose = m_verbose_set;
 }
 
 /*

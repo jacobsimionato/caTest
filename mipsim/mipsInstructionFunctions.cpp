@@ -46,27 +46,27 @@ ParamsReg decodeInstReg(wordT instructionBin){
 /*
  add
  */
-int mips_f_add(MipsInterpreterCore* core, int instructionBin){
+void mips_f_add(MipsInterpreterCore* core, int instructionBin){
     ParamsReg params = decodeInstReg(instructionBin);
     wordST result = core->getRegSig(params.s) + core->getRegSig(params.t);
     core->setRegSig(params.d, result);
-    return 4;
+    core->incIdealCycleCount(4);
 }
 
 /*
  addi
  */
-int mips_f_addi(MipsInterpreterCore* core, int instructionBin){
+void mips_f_addi(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT result = core->getRegSig(params.s) + static_cast<halfST>(params.C);
     core->setRegSig(params.t, result);
-    return 4;
+    core->incIdealCycleCount(4);
 }
 
 /*
  slti
  */
-int mips_f_slti(MipsInterpreterCore* core, int instructionBin){
+void mips_f_slti(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT result;
     if(core->getRegSig(params.s) < static_cast<halfST>(params.C)){
@@ -75,13 +75,13 @@ int mips_f_slti(MipsInterpreterCore* core, int instructionBin){
         result = 0;
     }
     core->setRegSig(params.t, result);
-    return 4;
+    core->incIdealCycleCount(4);
 }
 
 /*
  slt
  */
-int mips_f_slt(MipsInterpreterCore* core, int instructionBin){
+void mips_f_slt(MipsInterpreterCore* core, int instructionBin){
     ParamsReg params = decodeInstReg(instructionBin);
     wordT result;
     if(core->getRegSig(params.s) < core->getRegSig(params.t)){
@@ -90,13 +90,13 @@ int mips_f_slt(MipsInterpreterCore* core, int instructionBin){
         result = 0;
     }
     core->setRegSig(params.d, result);
-    return 4;
+    core->incIdealCycleCount(4);
 }
 
 /*
  beq
  */
-int mips_f_beq(MipsInterpreterCore* core, int instructionBin){
+void mips_f_beq(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     if(core->getRegUns(params.s) == core->getRegUns(params.t)){
         //Interpret offset as signed 16 bit integer
@@ -105,13 +105,13 @@ int mips_f_beq(MipsInterpreterCore* core, int instructionBin){
         long jumpOffsetBytes = jumpOffsetWords * 4;
         core->relJumpPc(jumpOffsetBytes);
     }
-    return 3;
+    core->incIdealCycleCount(3);
 }
 
 /*
  bne
  */
-int mips_f_bne(MipsInterpreterCore* core, int instructionBin){
+void mips_f_bne(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     if(core->getRegUns(params.s) != core->getRegUns(params.t)){
         //Interpret offset as signed 16 bit integer
@@ -120,13 +120,13 @@ int mips_f_bne(MipsInterpreterCore* core, int instructionBin){
         long jumpOffsetBytes = jumpOffsetWords * 4;
         core->relJumpPc(jumpOffsetBytes);
     }
-    return 3;
+    core->incIdealCycleCount(3);
 }
 
 /*
  j
  */
-int mips_f_j(MipsInterpreterCore* core, int instructionBin){
+void mips_f_j(MipsInterpreterCore* core, int instructionBin){
     ParamsJump params = decodeInstJump(instructionBin);
     
     wordT lower28bits = params.C * 4;
@@ -134,29 +134,29 @@ int mips_f_j(MipsInterpreterCore* core, int instructionBin){
     curPc = curPc & 0xF0000000;
     curPc = curPc | lower28bits;
     core->setPc(curPc - 4);
-    return 2;
+    core->incIdealCycleCount(2);
 }
 
 /*
  lw
  */
-int mips_f_lw(MipsInterpreterCore* core, int instructionBin){
+void mips_f_lw(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT address = core->getRegUns(params.s) + static_cast<halfST>(params.C);
     wordT data = core->retrieveWordData(address);
     core->setRegUns(params.t, data);
-    return 5;
+    core->incIdealCycleCount(5);
 }
 
 /*
  sw
  */
-int mips_f_sw(MipsInterpreterCore* core, int instructionBin){
+void mips_f_sw(MipsInterpreterCore* core, int instructionBin){
     ParamsImm params = decodeInstImm(instructionBin);
     wordT address = core->getRegUns(params.s) + static_cast<halfST>(params.C);
     wordT data = core->getRegUns(params.t);
     core->setWordData(address, data);
-    return 4;
+    core->incIdealCycleCount(4);
 }
 
 
